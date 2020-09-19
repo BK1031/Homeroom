@@ -16,11 +16,33 @@ h1,h4{
 #my-feed video{
     position: relative !important;
 }
-#remote-container video{
-    height: auto;
-    position: relative !important
-}
 button{
     margin: 0 auto;
     display: block;
+}
+body{
+    margin: 0px;
+}
+.stream-div{
+    position: absolute;
+    width: 80px;
+    height: 80px;
+}
+#remote-container{
+    position: relative !important;
+    left: 0px;
+    top: auto;
+    height: 400px;
+    width: auto;
+
+    background-size: 40px 40px;
+    background-image:
+    linear-gradient(to right, grey 1px, transparent 1px),
+    linear-gradient(to bottom, grey 1px, transparent 1px);
+}
+#my-stream{
+    width: 76px;
+    height: 76px;
+    border: 2px lightseagreen solid;
+    z-index: 2;
 }

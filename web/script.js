@@ -1,11 +1,12 @@
 var options = {
     appId: '0635469ee0d748a28432cfe30e80507c',
-    channel: 'toast',
-    token: '0060635469ee0d748a28432cfe30e80507cIACq6vho2crQ95raRWN9rGQawM+VIjlTOCtW1FAQlk/AMEBoWrMAAAAAEAA8pA8oeatlXwEAAQB4q2Vf',
+    channel: 'room1',
+    token: '0060635469ee0d748a28432cfe30e80507cIAD5RJh3wPsJK8/BQCWiYeGM4n5z5490yoDERtQ7ObgXMSo6c+QAAAAAEAAzuiAF3wtnXwEAAQDfC2df',
     uid: null,
 }
 
 var localStream = null;
+var localStreamDiv = null;
 
 let handleFail = function(err){
     console.log("Error : ", err);
@@ -21,7 +22,9 @@ function addStream(elementId){
     let streamDiv = document.createElement("div");
     streamDiv.id = elementId;
     streamDiv.style.transform="rotateY(180deg)";
+    streamDiv.classList.add('stream-div');
     remoteContainer.appendChild(streamDiv);
+    return streamDiv;
 }
 
 function removeStream(elementId) {
@@ -58,9 +61,15 @@ client.join(options.token, options.channel, options.uid, (uid)=>{
         audio: true,
     });
     localStream.init(()=>{
-        localStream.play('my-feed');
         client.publish(localStream, handleFail);
-    }, handleFail);
+        let streamId = String(localStream.getId());
+        db.ref('rooms/'+options.channel+'/'+streamId).set({
+            x: 0,
+            y: 0,
+        });
+        localStream.play('my-stream');
+        localStream.play(streamId);
+    });
 }, handleFail);
 
 client.on('stream-added', function(evt){
@@ -72,7 +81,8 @@ client.on('stream-subscribed', function(evt){
     let streamId = String(stream.getId());
     addStream(streamId);
     stream.play(streamId);
-    modifyAudio(streamId);
+    //modifyAudio(streamId);
+    updatePositionListener(streamId);
 });
 
 client.on('stream-removed', function(evt){
@@ -108,3 +118,51 @@ micToggleBtn.addEventListener("click",()=>{
 });
 
 //---------------------------------------------------------------------------------------------
+
+// delete from firebase when exiting window; exit should be checked in server
+window.onunload = function() {
+    client.leave(function(){
+        localStream.stop();
+        localStream.close();
+        db.ref('rooms/'+options.channel).child(String(localStream.getId())).remove();
+    }, handleFail);
+};
+
+var tempDiv = null;
+function updatePositionListener(id) {
+    db.ref('rooms/'+options.channel+'/'+id).on(
+        'value', function(snapshot){
+            let data = snapshot.val();
+            tempDiv = document.getElementById(id);
+            tempDiv.style.left = data.x+'px';
+            tempDiv.style.top = data.y+'px';
+        }
+    )
+}
+
+//---------------------------------------------------------------------------------------------
+
+let unitSize = 40;
+var difX, difY;
+
+localStreamDiv = addStream('my-stream');
+localStreamDiv.setAttribute('draggable','true');
+localStreamDiv.addEventListener("dragstart", function(ev){
+    difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
+    difY = ev.clientY - localStreamDiv.getBoundingClientRect().top;
+});
+remoteContainer.addEventListener("dragover", function(ev){
+    ev.preventDefault();
+});
+remoteContainer.addEventListener("drop", function(ev){
+    ev.preventDefault();
+    var newX = ev.clientX - difX - remoteContainer.getBoundingClientRect().left;
+    var newY = ev.clientY - difY - remoteContainer.getBoundingClientRect().top; 
+    newX = Math.round(newX/unitSize)*unitSize;
+    newY = Math.round(newY/unitSize)*unitSize;
+    localStreamDiv.style.left = newX+'px';
+    localStreamDiv.style.top = newY+'px';
+    db.ref('rooms/'+options.channel).child(String(localStream.getId())).update({
+        x: newX, y: newY,
+    });
+});
