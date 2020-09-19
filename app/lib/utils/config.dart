@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:firebase/firebase.dart' as fb;
+import 'package:homeroom_flutter/models/user.dart';
 
 import '../models/version.dart';
 
@@ -8,6 +9,8 @@ String appStatus = "";
 String appFull = "Version ${appVersion.toString()}";
 
 final router = new Router();
+
+User currUser;
 
 String appLegal = """
 MIT License

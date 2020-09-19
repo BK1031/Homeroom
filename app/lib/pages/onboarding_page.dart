@@ -7,6 +7,7 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

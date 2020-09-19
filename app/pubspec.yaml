@@ -32,6 +32,7 @@ dependencies:
   firebase: ^7.2.0
   google_sign_in: ^4.0.14
   progress_indicators: ^0.1.4
+  percent_indicator: ^2.1.5
   url_launcher: ^5.4.1
   intl: ^0.16.1
   cached_network_image: ^2.2.0+1
@@ -70,6 +71,9 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
+  assets:
+    - images/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -97,12 +101,12 @@ flutter:
   fonts:
     - family: Product Sans
       fonts:
-        - asset: fonts/Product Sans Regular.ttf
-        - asset: fonts/Product Sans Bold.ttf
+        - asset: fonts/Product-Sans-Regular.ttf
+        - asset: fonts/Product-Sans-Bold.ttf
           weight: 700
-        - asset: fonts/Product Sans Italic.ttf
+        - asset: fonts/Product-Sans-Italic.ttf
           style: italic
-        - asset: fonts/Product Sans Bold Italic.ttf
+        - asset: fonts/Product-Sans-Bold-Italic.ttf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

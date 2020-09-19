@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+bool darkMode = false;
+
 // MAIN THEME COLOR
 Color mainColor = const Color(0xFFffaa2b);
 
