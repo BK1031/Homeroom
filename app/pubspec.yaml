@@ -101,12 +101,12 @@ flutter:
   fonts:
     - family: Product Sans
       fonts:
-        - asset: fonts/Product Sans Regular.ttf
-        - asset: fonts/Product Sans Bold.ttf
+        - asset: fonts/Product-Sans-Regular.ttf
+        - asset: fonts/Product-Sans-Bold.ttf
           weight: 700
-        - asset: fonts/Product Sans Italic.ttf
+        - asset: fonts/Product-Sans-Italic.ttf
           style: italic
-        - asset: fonts/Product Sans Bold Italic.ttf
+        - asset: fonts/Product-Sans-Bold-Italic.ttf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

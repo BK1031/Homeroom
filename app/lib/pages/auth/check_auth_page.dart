@@ -18,7 +18,9 @@ class _CheckAuthPageState extends State<CheckAuthPage> {
 
   final connectionRef = fb.database().ref(".info/connected");
 
-  _CheckAuthPageState() {
+  @override
+  void initState() {
+    super.initState();
     checkConnection();
   }
 
@@ -113,44 +115,51 @@ class _CheckAuthPageState extends State<CheckAuthPage> {
     else {
       return Scaffold(
         backgroundColor: currBackgroundColor,
-        body: Container(
-          padding: EdgeInsets.only(bottom: 32.0, left: 16.0, right: 16.0, top: 32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              new Container(
-                child: new Image.asset(
-                  "images/homeroom-logo.png",
-                  color: mainColor,
-                  width: 100,
+        body: Center(
+          child: Container(
+            width: (MediaQuery.of(context).size.width > 1300) ? 1100 : MediaQuery.of(context).size.width - 50,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Center(
+                  child: new Container(
+                    child: new Image.asset(
+                      "images/homeroom-logo.png",
+                      color: mainColor,
+                      width: 100,
+                    ),
+                  ),
                 ),
-              ),
-              new Column(
-                children: [
-                  new Text(
-                    "Server Connection Error",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Colors.red,
-                      decoration: TextDecoration.none,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 35.0,
+                new Column(
+                  children: [
+                    Center(
+                      child: new Text(
+                        "Server Connection Error",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.red,
+                          decoration: TextDecoration.none,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 35.0,
+                        ),
+                      ),
                     ),
-                  ),
-                  new Padding(padding: EdgeInsets.all(8.0)),
-                  new Text(
-                    "We encountered a problem when trying to connect you to our servers. This page will automatically disappear if a connection with the server is established.\n\nTroubleshooting Tips:\n- Check your wireless connection\n- Restart the Homeroom application\n- Restart your device",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.none,
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.normal
+                    new Padding(padding: EdgeInsets.all(8.0)),
+                    new Text(
+                      "We encountered a problem when trying to connect you to our servers. This page will automatically disappear if a connection with the server is established.\n\nTroubleshooting Tips:\n- Check your wireless connection\n- Restart the Homeroom application\n- Restart your device",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.none,
+                          fontFamily: "Product Sans",
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.normal
+                      ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       );
