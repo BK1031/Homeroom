@@ -1,6 +1,7 @@
 import 'package:firebase/firebase.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:homeroom_flutter/pages/auth/check_auth_page.dart';
 import 'package:homeroom_flutter/pages/auth/login_page.dart';
 import 'package:homeroom_flutter/pages/auth/register_page.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_page.dart';
@@ -19,6 +20,9 @@ void main() {
       storageBucket: ServiceAccount.storageUrl
   );
   // AUTH ROUTES
+  router.define('/check-auth', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new CheckAuthPage();
+  }));
   router.define('/login', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new LoginPage();
   }));
@@ -43,7 +47,7 @@ void main() {
     title: "Homeroom",
     debugShowCheckedModeBanner: false,
     theme: mainTheme,
-    initialRoute: '/',
+    initialRoute: '/check-auth',
     onGenerateRoute: router.generator,
   ));
 }
