@@ -3,6 +3,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/pages/auth/login_page.dart';
 import 'package:homeroom_flutter/pages/auth/register_page.dart';
+import 'package:homeroom_flutter/pages/classroom/classroom_page.dart';
 import 'package:homeroom_flutter/pages/home_page.dart';
 import 'package:homeroom_flutter/pages/onboarding_page.dart';
 import 'package:homeroom_flutter/utils/config.dart';
@@ -31,6 +32,11 @@ void main() {
   }));
   router.define('/home', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new HomePage();
+  }));
+
+  // CLASSROOM ROUTES
+  router.define('/classroom/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new ClassroomPage(params["id"][0]);
   }));
 
   runApp(new MaterialApp(
