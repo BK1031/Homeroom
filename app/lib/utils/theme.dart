@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 bool darkMode = false;
 
 // MAIN THEME COLOR
-Color mainColor = const Color(0xFFffaa2b);
+Color mainColor = const Color(0xFFfba528);
 
 // LIGHT THEME
 const lightTextColor = Colors.black;

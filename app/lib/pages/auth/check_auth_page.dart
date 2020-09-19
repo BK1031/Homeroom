@@ -91,8 +91,7 @@ class _CheckAuthPageState extends State<CheckAuthPage> {
             children: [
               Center(
                 child: new Image.asset(
-                  "images/homeroom-logo.png",
-                  color: mainColor,
+                  "images/homeroom-owl.png",
                   width: 100,
                 ),
               ),
@@ -124,8 +123,7 @@ class _CheckAuthPageState extends State<CheckAuthPage> {
                 Center(
                   child: new Container(
                     child: new Image.asset(
-                      "images/homeroom-logo.png",
-                      color: mainColor,
+                      "images/homeroom-owl.png",
                       width: 100,
                     ),
                   ),

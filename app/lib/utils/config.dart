@@ -10,7 +10,7 @@ String appFull = "Version ${appVersion.toString()}";
 
 final router = new Router();
 
-User currUser;
+User currUser = new User();
 
 String appLegal = """
 MIT License
