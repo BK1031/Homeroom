@@ -33,15 +33,10 @@ body{
 }
 #remote-container{
     position: relative !important;
-    left: 45%;
+    left: auto;
     top: auto;
     height: 400px;
     width: auto;
-/*
-    background-size: 40px 40px;
-    background-image:
-    linear-gradient(to right, grey 1px, transparent 1px),
-    linear-gradient(to bottom, grey 1px, transparent 1px); */
 }
 #my-stream{
     width: 200px;
