@@ -8,6 +8,7 @@ import 'package:homeroom_flutter/pages/classroom/classroom_details_page.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_page.dart';
 import 'package:homeroom_flutter/pages/home_page.dart';
 import 'package:homeroom_flutter/pages/onboarding_page.dart';
+import 'package:homeroom_flutter/pages/rooms/room_page.dart';
 import 'package:homeroom_flutter/pages/settings/settings_page.dart';
 import 'package:homeroom_flutter/utils/config.dart';
 import 'package:homeroom_flutter/utils/service_account.dart';
@@ -46,6 +47,14 @@ void main() {
   }));
   router.define('/classroom/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ClassroomDetailsPage(params["id"][0]);
+  }));
+
+  // ROOM ROUTES
+  router.define('/room/new', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new ClassroomPage();
+  }));
+  router.define('/room/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new RoomPage(params["id"][0]);
   }));
 
   // SETTINGS ROUTES
