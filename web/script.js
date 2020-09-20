@@ -161,6 +161,15 @@ cameraToggleBtn.addEventListener("click",()=>{
     }
 });
 
+db.ref('rooms/'+channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
+  if (snapshot.val() == "True") {
+    console.log("True");
+  }
+  else {
+    console.log("False");
+  }
+}
+
 micToggleBtn.addEventListener("click",()=>{
     if(localStream.isAudioOn()){
         localStream.muteAudio();
