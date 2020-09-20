@@ -57,6 +57,7 @@ class _RoomPageState extends State<RoomPage> {
             new Expanded(
               child: Container(
                 child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     new ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
@@ -85,11 +86,10 @@ class _RoomPageState extends State<RoomPage> {
                       ),
                     ),
                     new Expanded(
-                      child: Center(
-                        child: new Container(
-                          width: double.maxFinite,
-                          child: Center(child: game.widget),
-                        ),
+                      child: new Container(
+                        width: double.maxFinite,
+                        color: currBackgroundColor,
+                        child: Center(child: game.widget),
                       ),
                     )
                   ],
