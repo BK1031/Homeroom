@@ -49,7 +49,7 @@ db.child("rooms").on("child_added", function(snapshot, prevChildKey) {
     console.log(snapshot.key);
     let channel = snapshot.key;
     let token = generateToken(channel, 0);
-    db.ref("rooms/channel").update({
+    db.child("rooms/"+channel).update({
     	token: token,
     });
 });
