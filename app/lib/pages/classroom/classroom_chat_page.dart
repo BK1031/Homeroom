@@ -332,10 +332,8 @@ wtf
     bool found = false;
     noNoWordList.forEach((element) {
       if (message.replaceAll(" ", "").replaceAll("\n", "").contains(element)) {
-        print("$element found");
         found = true;
       }
-      else print("$element not found");
     });
     return found;
   }
@@ -373,6 +371,7 @@ wtf
   Widget build(BuildContext context) {
     return new Material(
       child: new Container(
+        color: currCardColor,
         child: Column(
           children: [
             new Expanded(

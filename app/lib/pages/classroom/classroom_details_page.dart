@@ -4,6 +4,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/models/classroom.dart';
 import 'package:homeroom_flutter/models/user.dart';
+import 'package:homeroom_flutter/pages/classroom/classroom_chat_page.dart';
 import 'package:homeroom_flutter/utils/config.dart';
 import 'package:homeroom_flutter/utils/theme.dart';
 import 'package:intl/intl.dart';
@@ -120,7 +121,7 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
                       classroom.name,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35, color: currTextColor),
                     ),
-                    new Padding(padding: EdgeInsets.all(32)),
+                    new Padding(padding: EdgeInsets.all(24)),
                     new Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -141,7 +142,7 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
                                               new ClipRRect(
                                                 borderRadius: BorderRadius.all(Radius.circular(25)),
                                                 child: new CachedNetworkImage(
-                                                  imageUrl: currUser.profilePic,
+                                                  imageUrl: user.profilePic,
                                                   height: 50,
                                                 ),
                                               ),
@@ -173,7 +174,7 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
                                               new ClipRRect(
                                                 borderRadius: BorderRadius.all(Radius.circular(25)),
                                                 child: new CachedNetworkImage(
-                                                  imageUrl: currUser.profilePic,
+                                                  imageUrl: user.profilePic,
                                                   height: 50,
                                                 ),
                                               ),
@@ -223,32 +224,16 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
                                   color: currCardColor,
                                   child: Container(
+                                    height: 400,
                                     padding: EdgeInsets.all(16),
-                                    child: new Column(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        new ClipRRect(
-                                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                                          child: new CachedNetworkImage(
-                                            imageUrl: currUser.profilePic,
-                                            height: 100,
-                                          ),
-                                        ),
-                                        new Padding(padding: EdgeInsets.all(8)),
-                                        new Text(
-                                          currUser.firstName + " " + currUser.lastName,
-                                          style: TextStyle(fontSize: 25),
-                                        ),
-                                        new Padding(padding: EdgeInsets.all(8)),
-                                        new ListTile(
-                                          leading: new Icon(Icons.mail),
-                                          title: new Text(currUser.email),
-                                        ),
-                                        new ListTile(
-                                          leading: new Icon(Icons.grade),
-                                          title: new Text(currUser.role),
-                                        ),
+                                        new Text("Classroom Chat", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                                        new Padding(padding: EdgeInsets.all(2)),
+                                        new Expanded(child: new ClassroomChatPage(id)),
                                       ],
-                                    ),
+                                    )
                                   ),
                                 )
                               ],
