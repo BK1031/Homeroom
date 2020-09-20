@@ -150,49 +150,49 @@ client.on('peer-leave', function(evt){
 //---------------------------------------------------------------------------------------------
 
 
-micToggleBtn.addEventListener("click",()=>{
-    if(localStream.isAudioOn()) {
-        localStream.muteAudio();
-        micToggleBtn.innerHTML = 'turn mic on';
-    } else {
-        localStream.unmuteAudio();
-        micToggleBtn.innerHTML = 'turn mic off';
-    }
-});
+// micToggleBtn.addEventListener("click",()=>{
+//     if(localStream.isAudioOn()) {
+//         localStream.muteAudio();
+//         micToggleBtn.innerHTML = 'turn mic on';
+//     } else {
+//         localStream.unmuteAudio();
+//         micToggleBtn.innerHTML = 'turn mic off';
+//     }
+// });
 
-cameraToggleBtn.addEventListener("click",()=>{
-    if(localStream.isVideoOn()) {
-        localStream.muteVideo();
-        cameraToggleBtn.innerHTML = 'turn camera on';
-    } else {
-        localStream.unmuteVideo();
-        cameraToggleBtn.innerHTML = 'turn camera off';
-    }
-});
+// cameraToggleBtn.addEventListener("click",()=>{
+//     if(localStream.isVideoOn()) {
+//         localStream.muteVideo();
+//         cameraToggleBtn.innerHTML = 'turn camera on';
+//     } else {
+//         localStream.unmuteVideo();
+//         cameraToggleBtn.innerHTML = 'turn camera off';
+//     }
+// });
 
 db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
     if (snapshot.val() == "True") {
         localStream.unmuteAudio();
-        console.log("True");
-        micToggleBtn.innerHTML = 'turn mic on';
+        alert("True");
+        micToggleBtn.innerHTML = 'turn mic off';
     }
     else {
         localStream.muteAudio();
-        console.log("False");
-        micToggleBtn.innerHTML = 'turn mic off';
+        alert("False");
+        micToggleBtn.innerHTML = 'turn mic on';
     }
 });
 
 db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
     if (snapshot.val() == "True") {
         localStream.unmuteVideo();
-        console.log("True");
-        cameraToggleBtn.innerHTML = 'turn camera on';
+        alert("True");
+        cameraToggleBtn.innerHTML = 'turn camera off';
     }
     else {
         localStream.muteVideo();
-        console.log("False");
-        cameraToggleBtn.innerHTML = 'turn camera off';
+        alert("False");
+        cameraToggleBtn.innerHTML = 'turn camera on';
     }
 });
 
