@@ -133,12 +133,6 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       "direction": direction
     });
 
-    fb.database().ref("users").child(uid).once("value").then((snapshot) {
-      String firstName = snapshot.snapshot.val()["firstName"];
-      String lastName = snapshot.snapshot.val()["lastName"];
-      name = firstName + lastName;
-    });
-
     fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
       snapshot.snapshot.forEach((childSnapshot) {
         if (childSnapshot.key != uid) {
@@ -151,12 +145,14 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
           int stepVal = childSnapshot.val()["stepStage"];
           bool movVal = childSnapshot.val()["moving"];
           int dirVal = childSnapshot.val()["direction"];
-          String namVal = fb.database().ref("users")
-              .child(childSnapshot.key)
-              .child("firstName")
-              .toString() + " " +
-              fb.database().ref("users").child(childSnapshot.key).child(
-                  "lastName").toString();
+
+          String namVal = "";
+
+          fb.database().ref("users").child(childSnapshot.key).once("value").then((snapshot) {
+            String firstName = snapshot.snapshot.val()["firstName"];
+            String lastName = snapshot.snapshot.val()["lastName"];
+            namVal = firstName + " " + lastName;
+          });
 
           students[childSnapshot.key] =
               Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
@@ -176,15 +172,12 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
           int stepVal = event.snapshot.val()["stepStage"];
           bool movVal = event.snapshot.val()["moving"];
           int dirVal = event.snapshot.val()["direction"];
-          String namVal = fb.database().ref("users")
-              .child(event.snapshot.key)
-              .child("firstName")
-              .toString() + " " +
-              fb.database().ref("users").child(event.snapshot.key).child(
-                  "lastName").toString();
 
-          students[event.snapshot.key] =
-              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+          students[event.snapshot.key].x = xval;
+          students[event.snapshot.key].y = yval;
+          students[event.snapshot.key].stepStage = stepVal;
+          students[event.snapshot.key].moving = movVal;
+          students[event.snapshot.key].direction = dirVal;
         }
       });
     });
