@@ -4,7 +4,6 @@ import 'package:firebase/firebase.dart' as fb;
 import 'package:homeroom_flutter/models/chat_message.dart';
 import 'package:homeroom_flutter/models/user.dart';
 import 'package:homeroom_flutter/utils/config.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:homeroom_flutter/utils/theme.dart';
 
 class ClassroomChatPage extends StatefulWidget {
@@ -17,6 +16,86 @@ class ClassroomChatPage extends StatefulWidget {
 class _ClassroomChatPageState extends State<ClassroomChatPage> {
 
   String id;
+
+  String bad = """
+  anal
+anus
+arse
+ass
+ballsack
+balls
+bastard
+bitch
+biatch
+bloody
+blowjob
+blow job
+bollock
+bollok
+boner
+boob
+bugger
+bum
+butt
+buttplug
+clitoris
+cock
+coon
+crap
+cunt
+damn
+dick
+dildo
+dyke
+fag
+feck
+fellate
+fellatio
+felching
+fuck
+f u c k
+fudgepacker
+fudge packer
+flange
+Goddamn
+God damn
+hell
+homo
+jerk
+jizz
+knobend
+knob end
+labia
+lmao
+lmfao
+muff
+nigger
+nigga
+omg
+penis
+piss
+poop
+prick
+pube
+pussy
+queer
+scrotum
+sex
+shit
+s hit
+sh1t
+slut
+smegma
+spunk
+tit
+tosser
+turd
+twat
+vagina
+wank
+whore
+wtf
+""";
 
   _ClassroomChatPageState(this.id);
 
@@ -84,13 +163,9 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
                     children: [
                       new Container(width: 58),
                       new Expanded(
-                        child: new Linkify(
-                          text: message.message,
+                        child: new SelectableText(
+                          message.message,
                           style: TextStyle(color: currTextColor, fontSize: 15),
-                          linkStyle: TextStyle(color: mainColor, fontSize: 15),
-                          onOpen: (link) {
-                            launch(link.url);
-                          },
                         ),
                       ),
                     ],
@@ -129,13 +204,9 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
                               message.author.firstName + " " + message.author.lastName,
                               style: TextStyle(fontSize: 15),
                             ),
-                            new Linkify(
-                              text: message.message,
+                            new SelectableText(
+                              message.message,
                               style: TextStyle(color: currTextColor, fontSize: 15),
-                              linkStyle: TextStyle(color: mainColor, fontSize: 15),
-                              onOpen: (link) {
-                                launch(link.url);
-                              },
                             ),
                           ],
                         ),
@@ -237,9 +308,9 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
     if (newMessage.message.replaceAll(" ", "").replaceAll("\n", "") != "") {
       // Message is not empty
       if (!checkNSFW(newMessage.message)) {
-        fb.database().ref("chapters").child(currUser.chapter.chapterID).child("chat").child(chatID).push().set({
+        fb.database().ref("classrooms").child(id).child("chat").push().set({
           "message": newMessage.message,
-          "author": currUser.userID,
+          "author": currUser.id,
           "type": "text",
           "date": DateTime.now().toString(),
           "nsfw": false
@@ -326,15 +397,16 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
                       new Text("It looks like your message contains\nsome NSFW content. Are you sure\nyou would like to send this?", style: TextStyle(color: Colors.orangeAccent),),
                       new Padding(padding: EdgeInsets.all(4)),
                       new OutlineButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
                         disabledBorderColor: Colors.orangeAccent,
                         highlightedBorderColor: Colors.orangeAccent,
                         color: Colors.orangeAccent,
                         textColor: Colors.orangeAccent,
                         child: new Text("SEND"),
                         onPressed: () {
-                          fb.database().ref("chapters").child(currUser.chapter.chapterID).child("chat").child(chatID).push().set({
+                          fb.database().ref("classrooms").child(id).child("chat").push().set({
                             "message": newMessage.message,
-                            "author": currUser.userID,
+                            "author": currUser.id,
                             "type": "text",
                             "date": DateTime.now().toString(),
                             "nsfw": true
@@ -354,6 +426,7 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
           new Container(
             padding: EdgeInsets.all(8),
             child: new Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
               color: currCardColor,
               child: new ListTile(
                   title: Container(
@@ -389,6 +462,9 @@ class _ClassroomChatPageState extends State<ClassroomChatPage> {
                                   newMessage.message = input;
                                   confirmNsfw = false;
                                 });
+                              },
+                              onSubmitted: (input) {
+                                sendMessage();
                               },
                             ),
                           ),

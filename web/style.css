@@ -24,27 +24,28 @@ body{
     margin: 0px;
 }
 .stream-div{
-<<<<<<< HEAD
-    position: absolute;
-    width: 76px;
-    height: 76px;
-    border: 2px black solid;
-=======
     /* position: absolute;
     width: 80px;
     height: 80px; */
     width: 200px;
     height: 200px;
     /* Center vertically and horizontally */
+<<<<<<< HEAD
+    position: relative;
+    top: auto;
+    left: auto;
+    border: 2px black solid;
+    /* margin: -25px 0 0 -25px; */
+=======
     position: absolute;
     top: 20%;
     left: 45%;
     margin: -25px 0 0 -25px;
->>>>>>> 04e4c3e47b52d8d315cb1c8bab0468b7e42ed0ac
+>>>>>>> 5dada8ea7d6a58faec74950d92512a9f86c02806
 }
 #remote-container{
     position: relative !important;
-    left: 0px;
+    left: 45%;
     top: auto;
     height: 400px;
     width: auto;
@@ -55,16 +56,16 @@ body{
     linear-gradient(to bottom, grey 1px, transparent 1px); */
 }
 #my-stream{
-<<<<<<< HEAD
-=======
     width: 200px;
     height: 200px;
+<<<<<<< HEAD
+=======
     /* Center vertically and horizontally */
     position: absolute;
     top: 20%;
     left: 45%;
     margin: -25px 0 0 -25px;
->>>>>>> 04e4c3e47b52d8d315cb1c8bab0468b7e42ed0ac
+>>>>>>> 5dada8ea7d6a58faec74950d92512a9f86c02806
     border: 2px lightseagreen solid;
     z-index: 2;
 }
