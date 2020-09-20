@@ -17,8 +17,8 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   bool goingUp = false;
   bool goingDown = false;
 
-  double xposition = 300;
-  double yposition = 300;
+  double xposition = 0;
+  double yposition = 0;
 
   Image rightstep1;
   Image rightstep2;
@@ -147,8 +147,32 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
 
   bool inTable (double x, double y) {
     for (int i = 0; i < tableLocXs.length; i++) {
-      if ((x - (tableLocXs[i]+96)).abs() <= 96 && (y - (tableLocYs[i]+128)).abs() <= 128) {
-        return true;
+      double tableLocX = tableLocXs[i];
+      double tableLocY = tableLocYs[i];
+
+      double topLeftX = tableLocX-4;
+      double bottomLeftX = tableLocX-100;
+      double topRightX = tableLocX+161;
+      double bottomRightX = tableLocX+65;
+
+      double topY = tableLocY-80;
+      double bottomY = tableLocY+180;
+
+      if (y > topY && y < bottomY) {
+        double fractionOfTablePos = (y-topY)/(261);
+        double xBoundAtPos;
+        if (x < tableLocX) {
+          xBoundAtPos = topLeftX - fractionOfTablePos * 96;
+          if (x > xBoundAtPos) {
+            print(x);
+            return true;
+          }
+        } else {
+          xBoundAtPos = topRightX - fractionOfTablePos * 96;
+          if (x < xBoundAtPos) {
+            return true;
+          }
+        }
       }
     }
     return false;
@@ -169,21 +193,21 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
 
     super.update(t);
 
-    if (goingLeft && !goingRight && xposition > 0 && !inTable(xposition+64 - 3, yposition+64)) {
+    if (goingLeft && !goingRight && xposition > 0 && !inTable(xposition - 3, yposition)) {
       xposition -= 3;
       direction = -1;
     }
 
-    if (goingRight && !goingLeft && xposition < 900 && !inTable(xposition+64 + 3, yposition+64)) {
+    if (goingRight && !goingLeft && xposition < 900 && !inTable(xposition + 3, yposition)) {
       xposition += 3;
       direction = 1;
     }
 
-    if (goingUp && !goingDown && yposition > 120 && !inTable(xposition+64, yposition+64 - 3)) {
+    if (goingUp && !goingDown && yposition > 120 && !inTable(xposition, yposition - 3)) {
       yposition -= 3;
     }
 
-    if (goingDown && !goingUp && yposition < 900 && !inTable(xposition+64, yposition+64 + 3)) {
+    if (goingDown && !goingUp && yposition < 900 && !inTable(xposition, yposition + 3)) {
       yposition += 3;
     }
 

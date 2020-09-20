@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homeroom_flutter/pages/classroom/classroom_game.dart';
+import 'package:homeroom_flutter/pages/rooms/room_game.dart';
 
 class RoomPage extends StatefulWidget {
   String id;
