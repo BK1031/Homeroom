@@ -32,10 +32,7 @@ let client = AgoraRTC.createClient({
 client.init(options.appId, handleFail);
 
 
-var urlHash = window.location.hash;
-if(urlHash){
-    options.uid = parseInt(urlHash.split('#')[1]);
-    let channel = urlHash.split('#')[2];
+function createNewChannel(channel){
     db.ref('rooms/'+channel).once('value', async function(snapshot){
         if(snapshot.exists()){
             let data = snapshot.val();
@@ -54,6 +51,18 @@ if(urlHash){
             });
         }
     });
+}
+
+
+var urlHash = window.location.hash;
+if(urlHash){
+    options.uid = parseInt(urlHash.split('#')[1]);
+    let channel = urlHash.split('#')[2];
+    if(channel != null){
+        createNewChannel(channel);
+    } else {
+        joinChannel();
+    }
 } else {
     joinChannel();
 }
