@@ -134,7 +134,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
       snapshot.snapshot.forEach((childSnapshot) {
         if (childSnapshot.key != uid) {
-          studentIDs.add(childSnapshot.key);
+          if (!studentIDs.contains(childSnapshot.key)) {
+            studentIDs.add(childSnapshot.key);
+          }
 
           double xval = childSnapshot.val()["x"];
           double yval = childSnapshot.val()["y"];
@@ -157,7 +159,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     fb.database().ref("rooms").child(rID).child("users").onChildChanged.listen((event) {
       fb.database().ref("rooms").child(rID).child("users").child(event.snapshot.key).onValue.listen((event) {
         if (event.snapshot.key != uid) {
-          studentIDs.add(event.snapshot.key);
+          if (!studentIDs.contains(event.snapshot.key)) {
+            studentIDs.add(event.snapshot.key);
+          }
 
           double xval = event.snapshot.val()["x"];
           double yval = event.snapshot.val()["y"];
@@ -180,7 +184,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     fb.database().ref("rooms").child(rID).child("users").onChildAdded.listen((event) {
       fb.database().ref("rooms").child(rID).child("users").child(event.snapshot.key).onValue.listen((event) {
         if (event.snapshot.key != uid) {
-          studentIDs.add(event.snapshot.key);
+          if (!studentIDs.contains(event.snapshot.key)) {
+            studentIDs.add(event.snapshot.key);
+          }
 
           double xval = event.snapshot.val()["x"];
           double yval = event.snapshot.val()["y"];
