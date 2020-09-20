@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flame/components/component.dart';
@@ -144,7 +145,8 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       "y": yposition,
       "stepStage": stepStage,
       "moving": moving,
-      "direction": direction
+      "direction": direction,
+      "closestTable": tableID
     });
 
     fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
@@ -313,6 +315,13 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
 
     TextConfig config = TextConfig(fontSize:  24, fontFamily: "Product Sans");
     config.render(canvas, name, Position(xposition, yposition-30));
+
+    TextConfig tableConfig = TextConfig(fontSize:  48, fontFamily: "Product Sans");
+    String tableText = "At Table "+tableID.toString();
+    if (tableID == 0) {
+      tableText = "At Teacher Desk";
+    }
+    tableConfig.render(canvas, tableText, Position(10, 10));
   }
 
   bool inTable (double x, double y) {
@@ -362,7 +371,24 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   }
 
   void setClosestTable () {
-    List<int> distancesToTables = List();
+    double midDeskX = 750.0+120.0;
+    double midDeskY = 150.0-90.0;
+
+    double midStudentX = xposition + 64;
+    double midStudentY = yposition + 64;
+    double shortestDistance = pow((midStudentX - midDeskX), 2) + pow((midStudentY - midDeskY), 2);
+    tableID = 0;
+
+    for (int i = 0; i < 6; i++) {
+      double midTableX = tableLocXs[i] + 196;
+      double midTableY = tableLocYs[i] + 256;
+
+      double toTable = pow((midStudentX - midTableX), 2) + pow((midStudentY - midTableY), 2);
+      if (toTable < shortestDistance) {
+        shortestDistance = toTable;
+        tableID = i+1;
+      }
+    }
   }
 
   void update(double t) {
@@ -398,12 +424,19 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       yposition += 3;
     }
 
+    setClosestTable();
+
     fb.database().ref("rooms").child(rID).child("users").child(uid).update({
       "x": xposition,
       "y": yposition,
       "stepStage": stepStage,
       "moving": moving,
-      "direction": direction
+      "direction": direction,
+      "closestTable": tableID
+    });
+
+    fb.database().ref("rooms").child(rID).child("tables").child(tableID.toString()).update({
+      uid: name
     });
 
     if (!goingLeft && !goingRight && !goingUp && !goingDown) {
