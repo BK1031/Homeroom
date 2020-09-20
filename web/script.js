@@ -161,14 +161,14 @@ cameraToggleBtn.addEventListener("click",()=>{
     }
 });
 
-db.ref('rooms/'+channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
-  if (snapshot.val() == "True") {
-    console.log("True");
-  }
-  else {
-    console.log("False");
-  }
-}
+// db.ref('rooms/'+option.channel+'/users/'+'1234'+'/audio').on('value', function(snapshot){
+//   if (snapshot.val() == "True") {
+//     console.log("True");
+//   }
+//   else {
+//     console.log("False");
+//   }
+// }
 
 micToggleBtn.addEventListener("click",()=>{
     if(localStream.isAudioOn()){
