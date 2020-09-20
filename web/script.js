@@ -2,6 +2,8 @@
 
 var localStream = null;
 var localStreamDiv = null;
+var screenStream = null;
+var screenStreamDiv = null;
 
 
 let handleFail = function(err){
@@ -106,15 +108,9 @@ function modifyAudio(id) {
 
 function joinChannel() {
     client.join(options.token, options.channel, options.uid, (uid)=>{
-        var screenOn = false;
-        db.ref('rooms/'+options.channel+'/users/'+options.uid+'/screen').on('value', function(snapshot){
-          screenOn = snapshot.val()
-          alert(screenOn)
-        }
         localStream = AgoraRTC.createStream({
             video: true,
             audio: true,
-            screen: screenOn;
         });
         localStream.init(()=>{
             client.publish(localStream, handleFail);
@@ -158,7 +154,7 @@ client.on('peer-leave', function(evt){
 
 function addMuteUnmuteListeners() {
     db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
-        if (snapshot.val() == true) {
+        if (snapshot.val()==null || snapshot.val()) {
             localStream.unmuteAudio();
         }
         else {
@@ -167,13 +163,33 @@ function addMuteUnmuteListeners() {
     });
 
     db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
-        if (snapshot.val() == true) {
+        if (snapshot.val()==null || snapshot.val()) {
             localStream.unmuteVideo();
         }
         else {
             localStream.muteVideo();
         }
     });
+
+    // db.ref('rooms/'+options.channel+'/users/'+options.uid+'/screen').on('value', function(snapshot){
+    //     if(snapshot.val()){
+    //         localStream = AgoraRTC.createStream({
+    //             video: true,
+    //             audio: true,
+    //         });
+    //         localStream.init(()=>{
+    //             client.publish(screenStream, handleFail);
+    //             let streamId = String(screenStream.getId());
+    //             addMuteUnmuteListeners();
+    //             screenStream.play('screen-stream');
+    //             screenStream.play(streamId);
+    //             screenStreamDiv = addStream('screen-stream');
+    //         });
+    //     } else {
+
+    //     }
+    // });
+
 }
 
 
