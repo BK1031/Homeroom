@@ -161,7 +161,7 @@ wtf
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      new Container(width: 58),
+                      new Container(width: 52),
                       new Expanded(
                         child: new SelectableText(
                           message.message,
@@ -202,7 +202,7 @@ wtf
                           children: [
                             new Text(
                               message.author.firstName + " " + message.author.lastName,
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15, color: message.author.role == "Student" ? Colors.grey : mainColor),
                             ),
                             new SelectableText(
                               message.message,
@@ -273,7 +273,7 @@ wtf
                           children: [
                             new Text(
                               message.author.firstName + " " + message.author.lastName,
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15, color: message.author.role == "Student" ? Colors.grey : mainColor),
                             ),
                             new Padding(padding: EdgeInsets.all(2)),
                             new ClipRRect(
@@ -371,126 +371,128 @@ wtf
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      child: Column(
-        children: [
-          new Expanded(
-            child: new SingleChildScrollView(
-              controller: _scrollController,
-              child: new Column(
-                  children: widgetList
+    return new Material(
+      child: new Container(
+        child: Column(
+          children: [
+            new Expanded(
+              child: new SingleChildScrollView(
+                controller: _scrollController,
+                child: new Column(
+                    children: widgetList
+                ),
               ),
             ),
-          ),
-          new AnimatedContainer(
-              padding: EdgeInsets.only(right: 8.0, left: 8.0, bottom: 8.0),
-              duration: const Duration(milliseconds: 200),
-              height: confirmNsfw ? 100 : 0,
-              child: new Card(
-                color: Color(0xFFffebba),
-                child: new Container(
-                  padding: EdgeInsets.all(8),
-                  child: new Row(
-                    children: [
-                      new Icon(Icons.warning, color: Colors.orangeAccent,),
-                      new Padding(padding: EdgeInsets.all(4)),
-                      new Text("It looks like your message contains\nsome NSFW content. Are you sure\nyou would like to send this?", style: TextStyle(color: Colors.orangeAccent),),
-                      new Padding(padding: EdgeInsets.all(4)),
-                      new OutlineButton(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-                        disabledBorderColor: Colors.orangeAccent,
-                        highlightedBorderColor: Colors.orangeAccent,
-                        color: Colors.orangeAccent,
-                        textColor: Colors.orangeAccent,
-                        child: new Text("SEND"),
-                        onPressed: () {
-                          fb.database().ref("classrooms").child(id).child("chat").push().set({
-                            "message": newMessage.message,
-                            "author": currUser.id,
-                            "type": "text",
-                            "date": DateTime.now().toString(),
-                            "nsfw": true
-                          });
-                          _textController.clear();
-                          newMessage = ChatMessage.plain();
-                          setState(() {
-                            confirmNsfw = false;
-                          });
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              )
-          ),
-          new Container(
-            padding: EdgeInsets.all(8),
-            child: new Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-              color: currCardColor,
-              child: new ListTile(
-                  title: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Material(
-                          child: new Container(
-                            child: new IconButton(
-                              icon: new Icon(Icons.image),
-                              color: Colors.grey,
-                              onPressed: () {
-                                sendMedia();
-                              },
-                            ),
-                          ),
-                          color: currCardColor,
-                        ),
-                        // Edit text
-                        Flexible(
-                          child: Container(
-                            child: TextField(
-                              controller: _textController,
-                              focusNode: _focusNode,
-                              textInputAction: TextInputAction.newline,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(color: currTextColor, fontSize: 15.0),
-                              decoration: InputDecoration.collapsed(
-                                  hintText: 'Type your message...',
-                                  hintStyle: TextStyle(color: darkMode ? Colors.grey : Colors.black54)
-                              ),
-                              onChanged: (input) {
-                                setState(() {
-                                  newMessage.message = input;
-                                  confirmNsfw = false;
-                                });
-                              },
-                              onSubmitted: (input) {
-                                sendMessage();
-                              },
-                            ),
-                          ),
-                        ),
-                        new Material(
-                          child: new Container(
-                            child: new IconButton(
-                              icon: new Icon(
-                                Icons.send,
-                                color: newMessage.message.replaceAll(" ", "").replaceAll("\n", "") != "" ? mainColor : Colors.grey,
-                              ),
-                              onPressed: () {
-                                sendMessage();
-                              },
-                            ),
-                          ),
-                          color: currCardColor,
+            new AnimatedContainer(
+                padding: EdgeInsets.only(right: 8.0, left: 8.0, bottom: 8.0),
+                duration: const Duration(milliseconds: 200),
+                height: confirmNsfw ? 100 : 0,
+                child: new Card(
+                  color: Color(0xFFffebba),
+                  child: new Container(
+                    padding: EdgeInsets.all(8),
+                    child: new Row(
+                      children: [
+                        new Icon(Icons.warning, color: Colors.orangeAccent,),
+                        new Padding(padding: EdgeInsets.all(4)),
+                        new Text("It looks like your message contains\nsome NSFW content. Are you sure\nyou would like to send this?", style: TextStyle(color: Colors.orangeAccent),),
+                        new Padding(padding: EdgeInsets.all(4)),
+                        new OutlineButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                          disabledBorderColor: Colors.orangeAccent,
+                          highlightedBorderColor: Colors.orangeAccent,
+                          color: Colors.orangeAccent,
+                          textColor: Colors.orangeAccent,
+                          child: new Text("SEND"),
+                          onPressed: () {
+                            fb.database().ref("classrooms").child(id).child("chat").push().set({
+                              "message": newMessage.message,
+                              "author": currUser.id,
+                              "type": "text",
+                              "date": DateTime.now().toString(),
+                              "nsfw": true
+                            });
+                            _textController.clear();
+                            newMessage = ChatMessage.plain();
+                            setState(() {
+                              confirmNsfw = false;
+                            });
+                          },
                         )
                       ],
                     ),
-                    width: double.infinity,
-                  )
+                  ),
+                )
+            ),
+            new Container(
+              padding: EdgeInsets.all(8),
+              child: new Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                color: currCardColor,
+                child: new ListTile(
+                    title: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Material(
+                            child: new Container(
+                              child: new IconButton(
+                                icon: new Icon(Icons.image),
+                                color: Colors.grey,
+                                onPressed: () {
+                                  sendMedia();
+                                },
+                              ),
+                            ),
+                            color: currCardColor,
+                          ),
+                          // Edit text
+                          Flexible(
+                            child: Container(
+                              child: TextField(
+                                controller: _textController,
+                                focusNode: _focusNode,
+                                textInputAction: TextInputAction.newline,
+                                textCapitalization: TextCapitalization.sentences,
+                                style: TextStyle(color: currTextColor, fontSize: 15.0),
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'Type your message...',
+                                    hintStyle: TextStyle(color: darkMode ? Colors.grey : Colors.black54)
+                                ),
+                                onChanged: (input) {
+                                  setState(() {
+                                    newMessage.message = input;
+                                    confirmNsfw = false;
+                                  });
+                                },
+                                onSubmitted: (input) {
+                                  sendMessage();
+                                },
+                              ),
+                            ),
+                          ),
+                          new Material(
+                            child: new Container(
+                              child: new IconButton(
+                                icon: new Icon(
+                                  Icons.send,
+                                  color: newMessage.message.replaceAll(" ", "").replaceAll("\n", "") != "" ? mainColor : Colors.grey,
+                                ),
+                                onPressed: () {
+                                  sendMessage();
+                                },
+                              ),
+                            ),
+                            color: currCardColor,
+                          )
+                        ],
+                      ),
+                      width: double.infinity,
+                    )
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
