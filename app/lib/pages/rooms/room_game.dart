@@ -139,7 +139,7 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     loadImages();
 
     uid = fb.auth().currentUser.uid;
-    fb.database().ref("rooms").child(rID).child("users").child(uid).set({
+    fb.database().ref("rooms").child(rID).child("users").child(uid).update({
       "x": xposition,
       "y": yposition,
       "stepStage": stepStage,
