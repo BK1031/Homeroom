@@ -200,6 +200,7 @@ class _RoomPageState extends State<RoomPage> {
                           color: Colors.red,
                           child: new InkWell(
                             onTap: () {
+                              game.suspend();
                               router.navigateTo(context, "/home", transition: TransitionType.fadeIn);
                               fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
                             },
