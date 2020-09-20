@@ -46,6 +46,7 @@ body{
 #my-stream{
     width: 200px;
     height: 200px;
+    position: relative;
     border: 2px lightseagreen solid;
     z-index: 2;
 }
