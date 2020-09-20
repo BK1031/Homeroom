@@ -176,10 +176,10 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
             String firstName = snapshot.snapshot.val()["firstName"];
             String lastName = snapshot.snapshot.val()["lastName"];
             namVal = firstName + " " + lastName;
-          });
 
-          students[childSnapshot.key] =
-              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+            students[childSnapshot.key] =
+                Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+          });
         }
       });
     });
@@ -196,6 +196,13 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
           int stepVal = event.snapshot.val()["stepStage"];
           bool movVal = event.snapshot.val()["moving"];
           int dirVal = event.snapshot.val()["direction"];
+          String namVal = "";
+          fb.database().ref("users").child(event.snapshot.key).once("value").then((snapshot) {
+            String firstName = snapshot.snapshot.val()["firstName"];
+            String lastName = snapshot.snapshot.val()["lastName"];
+            namVal = firstName + " " + lastName;
+            students[event.snapshot.key].name = namVal;
+          });
 
           students[event.snapshot.key].x = xval;
           students[event.snapshot.key].y = yval;
@@ -223,10 +230,10 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
             String firstName = snapshot.snapshot.val()["firstName"];
             String lastName = snapshot.snapshot.val()["lastName"];
             namVal = firstName + " " + lastName;
-          });
 
-          students[event.snapshot.key] =
-              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+            students[event.snapshot.key] =
+                Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+          });
         }
       });
     });
