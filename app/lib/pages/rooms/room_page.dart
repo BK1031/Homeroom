@@ -1,4 +1,5 @@
 import 'package:easy_web_view/easy_web_view.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_chat_page.dart';
 import 'package:homeroom_flutter/pages/rooms/room_game.dart';
@@ -199,6 +200,7 @@ class _RoomPageState extends State<RoomPage> {
                           child: new InkWell(
                             onTap: () {
                               fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
+                              router.navigateTo(context, "/home", transition: TransitionType.native);
                             },
                             child: new Container(
                               height: 75,
