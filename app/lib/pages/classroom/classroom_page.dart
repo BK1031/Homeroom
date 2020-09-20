@@ -127,7 +127,61 @@ class _ClassroomPageState extends State<ClassroomPage> {
   }
 
   void joinClass() {
-
+    String joinCode = "";
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+          backgroundColor: currCardColor,
+          title: new Text("Create Class", style: TextStyle(color: currTextColor),),
+          content: Container(
+            width: 550,
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: new TextField(
+                    decoration: InputDecoration(
+                        labelText: "Join Code",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12))
+                        )
+                    ),
+                    onChanged: (input) {
+                      joinCode = input;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            new FlatButton(
+                child: new Text("CANCEL"),
+                textColor: mainColor,
+                onPressed: () {
+                  router.pop(context);
+                }
+            ),
+            new FlatButton(
+                child: new Text("JOIN"),
+                textColor: mainColor,
+                onPressed: () {
+                  if (joinCode != "") {
+                    fb.database().ref("classrooms").child(joinCode).once("value").then((value) {
+                      if (value.snapshot.val() != null) {
+                        // Code is valid
+                        fb.database().ref("users").child(currUser.id).child("classrooms").child(joinCode).set(joinCode);
+                        router.pop(context);
+                      }
+                    });
+                  }
+                }
+            )
+          ],
+        )
+    );
   }
 
   @override
@@ -152,8 +206,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
         icon: Icon(Icons.add, color: Colors.white,),
         elevation: 0,
         onPressed: () {
-          // currUser.role == "Student" ? joinClass() : createClass();
-          createClass();
+          currUser.role == "Student" ? joinClass() : createClass();
         },
       ),
       body: new Container(
