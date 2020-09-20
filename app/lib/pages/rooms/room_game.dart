@@ -34,6 +34,7 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   ui.Image leftstep0;
   ui.Image background;
   ui.Image table;
+  ui.Image teacherDesk;
 
   List<double> tableLocXs = [100, 100, 400, 400, 700, 700];
   List<double> tableLocYs = [200, 600, 200, 600, 200, 600];
@@ -61,6 +62,12 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   String name = "";
 
   String rID;
+
+  /*
+  0: teacher desk
+  then starts from top left, goes down, then up right, then down...
+   */
+  int tableID = 0;
 
   void loadImages() {
     Flame.images.load("rightstep0.png").then((ui.Image value) {
@@ -114,6 +121,13 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
 
     Flame.images.load("table.png").then((ui.Image value) {
       table = value;
+    },
+        onError: (e) {
+          print(e.toString());
+        });
+
+    Flame.images.load("teacherDesk.png").then((ui.Image value) {
+      teacherDesk = value;
     },
         onError: (e) {
           print(e.toString());
@@ -232,6 +246,11 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       }
     }
 
+    if (teacherDesk != null) {
+      Paint tdPaint = Paint();
+      canvas.drawImage(table, new Offset(750, 100), tdPaint);
+    }
+
     //other students
     if (students.length != null) {
       for (int i = 0; i < studentIDs.length; i++) {
@@ -328,6 +347,24 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     return false;
   }
 
+  bool inTeacherDesk (double x, double y) {
+    double midTableX = 750.0+120.0;
+    double midTableY = 150.0-90.0;
+
+    double midStudentX = x + 64;
+    double midStudentY = y + 64;
+
+    if ((midStudentX-midTableX).abs() < 120 && (midStudentY-midTableY).abs() < 90) {
+      return true;
+    }
+
+    return false;
+  }
+
+  void setClosestTable () {
+    List<int> distancesToTables = List();
+  }
+
   void update(double t) {
     if (moving) {
       stepTimer += 1;
@@ -343,25 +380,25 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
 
     super.update(t);
 
-    if (goingLeft && !goingRight && xposition > 0 && !inTable(xposition - 3, yposition)) {
+    if (goingLeft && !goingRight && xposition > 0 && !inTeacherDesk(xposition-3, yposition) && !inTable(xposition - 3, yposition)) {
       xposition -= 3;
       direction = -1;
     }
 
-    if (goingRight && !goingLeft && xposition < 900 && !inTable(xposition + 3, yposition)) {
+    if (goingRight && !goingLeft && xposition < 900 && !inTeacherDesk(xposition+3, yposition) && !inTable(xposition + 3, yposition)) {
       xposition += 3;
       direction = 1;
     }
 
-    if (goingUp && !goingDown && yposition > 120 && !inTable(xposition, yposition - 3)) {
+    if (goingUp && !goingDown && yposition > 120 && !inTeacherDesk(xposition, yposition-3) && !inTable(xposition, yposition - 3)) {
       yposition -= 3;
     }
 
-    if (goingDown && !goingUp && yposition < 900 && !inTable(xposition, yposition + 3)) {
+    if (goingDown && !goingUp && yposition < 900 && !inTeacherDesk(xposition, yposition+3) && !inTable(xposition, yposition + 3)) {
       yposition += 3;
     }
 
-    fb.database().ref("rooms").child(rID).child("users").child(uid).set({
+    fb.database().ref("rooms").child(rID).child("users").child(uid).update({
       "x": xposition,
       "y": yposition,
       "stepStage": stepStage,
