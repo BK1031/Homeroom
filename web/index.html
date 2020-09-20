@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mooz Zoomer Zoom2.0 ClassZoom Zo_om Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>
+        Mooz Zoomer Zoom2.0 ClassZoom Zo_om Test
+    </h1>
+
+    <button id="camera-toggle">camera on/off</button>
+    <button id="mic-toggle">mic on/off</button>
+
+    <!--test-->
+    <input class="panning-control" type="range" min="-1" max="1" step="0.1" value="0">
+    <span class="panning-value">0</span>
+    <!-- /test-->
+
+    <h4>My Feed :</h4>
+    <div id="my-feed"></div>
+
+    <h4>Remote Feeds :</h4>
+    <div id="remote-container">
+
+    </div>
+	<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-analytics.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-database.js"></script>
+    <script src="AgoraRTCSDK-3.1.1.js"></script>
+    <script src="setup.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,9 +1,37 @@
+// default room and default user id
+
 var options = {
     appId: '0635469ee0d748a28432cfe30e80507c',
     channel: 'room1',
     token: '0060635469ee0d748a28432cfe30e80507cIAD5RJh3wPsJK8/BQCWiYeGM4n5z5490yoDERtQ7ObgXMSo6c+QAAAAAEAAzuiAF3wtnXwEAAQDfC2df',
     uid: null,
 }
+
+var urlHash = window.location.hash;
+if(urlHash){
+    options.uid = parseInt(urlHash.split('#')[1]);
+    let channel = urlHash.split('#')[2];
+    db.ref('rooms/'+channel).once('value', async function(snapshot){
+        if(snapshot.exists()){
+            let data = snapshot.val();
+            options.channel = channel;
+            options.token = data.token;
+            joinChannel();
+        } else {
+            db.ref('rooms/'+channel).set('hi');
+            db.ref('rooms/'+channel+'/token').on('value', function(snapshot){
+                let data = snapshot.val();
+                if(data != null) {
+                    options.channel = channel;
+                    options.token = data;
+                    joinChannel();
+                }
+            });
+        }
+    });
+}
+
+
 
 var localStream = null;
 var localStreamDiv = null;
@@ -32,7 +60,8 @@ function removeStream(elementId) {
     if(streamDiv) streamDiv.parentNode.removeChild(streamDiv);
 }
 
-/*
+// this is the audio panner but isn't working right now
+
 function modifyAudio(id) {
     console.log(id);
     let audioElement = document.getElementById("audio"+id);
@@ -44,7 +73,8 @@ function modifyAudio(id) {
     source.connect(panNode);
     panNode.connect(audioCtx.destination);
 }
-*/
+
+
 
 //---------------------------------------------------------------------------------------------
 
@@ -55,22 +85,24 @@ let client = AgoraRTC.createClient({
 
 client.init(options.appId, handleFail);
 
-client.join(options.token, options.channel, options.uid, (uid)=>{
-    localStream = AgoraRTC.createStream({
-        video: true,
-        audio: true,
-    });
-    localStream.init(()=>{
-        client.publish(localStream, handleFail);
-        let streamId = String(localStream.getId());
-        db.ref('rooms/'+options.channel+'/'+streamId).set({
-            x: 0,
-            y: 0,
+function joinChannel() {
+    client.join(options.token, options.channel, options.uid, (uid)=>{
+        localStream = AgoraRTC.createStream({
+            video: true,
+            audio: true,
         });
-        localStream.play('my-stream');
-        localStream.play(streamId);
-    });
-}, handleFail);
+        localStream.init(()=>{
+            client.publish(localStream, handleFail);
+            let streamId = String(localStream.getId());
+            db.ref('rooms/'+options.channel+'/users/'+streamId).set({
+                x: 0,
+                y: 0,
+            });
+            localStream.play('my-stream');
+            localStream.play(streamId);
+        });
+    }, handleFail);
+}
 
 client.on('stream-added', function(evt){
     client.subscribe(evt.stream, handleFail);
@@ -124,13 +156,13 @@ window.onunload = function() {
     client.leave(function(){
         localStream.stop();
         localStream.close();
-        db.ref('rooms/'+options.channel).child(String(localStream.getId())).remove();
+        db.ref('rooms/'+options.channel+'/users').child(String(localStream.getId())).remove();
     }, handleFail);
 };
 
 var tempDiv = null;
 function updatePositionListener(id) {
-    db.ref('rooms/'+options.channel+'/'+id).on(
+    db.ref('rooms/'+options.channel+'/users/'+id).on(
         'value', function(snapshot){
             let data = snapshot.val();
             tempDiv = document.getElementById(id);
@@ -146,6 +178,28 @@ function updatePositionListener(id) {
 // var difX, difY;
 
 localStreamDiv = addStream('my-stream');
+<<<<<<< HEAD
+localStreamDiv.setAttribute('draggable','true');
+localStreamDiv.addEventListener("dragstart", function(ev){
+    difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
+    difY = ev.clientY - localStreamDiv.getBoundingClientRect().top;
+});
+remoteContainer.addEventListener("dragover", function(ev){
+    ev.preventDefault();
+});
+remoteContainer.addEventListener("drop", function(ev){
+    ev.preventDefault();
+    var newX = ev.clientX - difX - remoteContainer.getBoundingClientRect().left;
+    var newY = ev.clientY - difY - remoteContainer.getBoundingClientRect().top; 
+    newX = Math.round(newX/unitSize)*unitSize;
+    newY = Math.round(newY/unitSize)*unitSize;
+    localStreamDiv.style.left = newX+'px';
+    localStreamDiv.style.top = newY+'px';
+    db.ref('rooms/'+options.channel+'/users').child(String(localStream.getId())).update({
+        x: newX, y: newY,
+    });
+});
+=======
 localStreamDiv.setAttribute('draggable','false');
 // localStreamDiv.addEventListener("dragstart", function(ev){
 //     difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
@@ -166,3 +220,4 @@ localStreamDiv.setAttribute('draggable','false');
 //         x: newX, y: newY,
 //     });
 // });
+>>>>>>> 04e4c3e47b52d8d315cb1c8bab0468b7e42ed0ac
