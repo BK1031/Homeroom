@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/utils/config.dart';
 import 'package:homeroom_flutter/utils/theme.dart';
+import 'package:firebase/firebase.dart' as fb;
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +18,76 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void newRoom() {
+    var rnd = new Random();
+    var next = rnd.nextDouble() * 1000000;
+    while (next < 100000) {
+      next *= 10;
+    }
+    String roomCode = next.toInt().toString();
+    fb.database().ref("rooms").child(roomCode).child("hi").set("hi");
+    router.pop(context);
+    router.navigateTo(context, "/room/$roomCode", transition: TransitionType.fadeIn);
+  }
+
+  void joinRoom() {
+    String code = "";
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+          backgroundColor: currCardColor,
+          title: new Text("Join Meeting", style: TextStyle(color: currTextColor),),
+          content: Container(
+            width: 550,
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: new TextField(
+                    decoration: InputDecoration(
+                        labelText: "Join Code",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12))
+                        )
+                    ),
+                    onChanged: (input) {
+                      code = input;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            new FlatButton(
+                child: new Text("CANCEL"),
+                textColor: mainColor,
+                onPressed: () {
+                  router.pop(context);
+                }
+            ),
+            new FlatButton(
+                child: new Text("JOIN"),
+                textColor: mainColor,
+                onPressed: () {
+                  if (code != "") {
+                    fb.database().ref("rooms").child(code).once("value").then((value) {
+                      if (value.snapshot.val() != null) {
+                        // Code is valid
+                        router.pop(context);
+                        router.navigateTo(context, "/room/$code", transition: TransitionType.fadeIn);
+                      }
+                    });
+                  }
+                }
+            )
+          ],
+        )
+    );
   }
 
   @override
@@ -125,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                                       color: mainColor,
                                       child: new InkWell(
                                         onTap: () {
-                                          router.navigateTo(context, "/room/new", transition: TransitionType.fadeIn);
+                                          newRoom();
                                         },
                                         child: new Container(
                                           height: 125,
@@ -146,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                                       color: mainColor,
                                       child: new InkWell(
                                         onTap: () {
-                                          router.navigateTo(context, "/room/new", transition: TransitionType.fadeIn);
+                                          joinRoom();
                                         },
                                         child: new Container(
                                           height: 125,

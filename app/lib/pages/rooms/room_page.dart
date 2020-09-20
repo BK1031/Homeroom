@@ -105,7 +105,9 @@ class _RoomPageState extends State<RoomPage> {
                     padding: EdgeInsets.all(8),
                     child: new Column(
                       children: [
-                        new Text("My Controls", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                        new Text("Room Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                        new Padding(padding: EdgeInsets.all(2)),
+                        new Text("Join Code: $id", style: TextStyle(fontSize: 18, color: Colors.grey),),
                         new Padding(padding: EdgeInsets.all(2)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,6 +187,28 @@ class _RoomPageState extends State<RoomPage> {
                                 children: [
                                   new Icon(screen ? Icons.stop_screen_share : Icons.screen_share, size: 50, color: Colors.grey,),
                                   new Text(screen ? "Stop Sharing" : "Share Screen", style: TextStyle(color: Colors.grey, fontSize: 20),)
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        new Padding(padding: EdgeInsets.all(2)),
+                        new Card(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                          color: Colors.red,
+                          child: new InkWell(
+                            onTap: () {
+                              fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
+                            },
+                            child: new Container(
+                              height: 75,
+                              width: double.infinity,
+                              padding: EdgeInsets.all(8),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  new Icon(Icons.exit_to_app, size: 50, color: Colors.white,),
+                                  new Text("Leave Room", style: TextStyle(color: Colors.white, fontSize: 20),)
                                 ],
                               ),
                             ),
