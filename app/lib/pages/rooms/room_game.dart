@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flame/components/component.dart';
@@ -7,6 +8,8 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/keyboard.dart';
+import 'package:firebase/firebase.dart' as fb;
+import 'package:homeroom_flutter/models/student.dart';
 
 class ClassroomGame extends BaseGame with KeyboardEvents {
   Size screenSize;
@@ -32,6 +35,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   List<double> tableLocXs = [100, 100, 400, 400, 700, 700];
   List<double> tableLocYs = [200, 600, 200, 600, 200, 600];
 
+  List<String> studentIDs = List();
+  Map<String, Student> students = Map();
+
   int stepTimer = 0;
 
   /*
@@ -48,7 +54,12 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
    */
   int direction = 1;
 
-  ClassroomGame () {
+  String uid = "";
+  String name = "";
+
+  String rID;
+
+  void loadImages() {
     Flame.images.load("rightstep0.png").then((Image value) {
       rightstep0 = value;
     },
@@ -106,6 +117,67 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
         });
   }
 
+  ClassroomGame (String roomID) {
+    rID = roomID;
+    loadImages();
+
+    uid = fb.auth().currentUser.uid;
+    name = fb.database().ref("users").child(uid).child("firstName").toString()+" "+fb.database().ref("users").child(uid).child("lastName").toString();
+    fb.database().ref("rooms").child(rID).child("users").child(uid).set({
+      "x": xposition,
+      "y": yposition,
+      "stepStage": stepStage,
+      "moving": moving,
+      "direction": direction
+    });
+
+    fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
+      snapshot.snapshot.forEach((childSnapshot) {
+        if (childSnapshot.key != uid) {
+          studentIDs.add(childSnapshot.key);
+
+          double xval = childSnapshot.val()["x"];
+          double yval = childSnapshot.val()["y"];
+          int stepVal = childSnapshot.val()["stepStage"];
+          bool movVal = childSnapshot.val()["moving"];
+          int dirVal = childSnapshot.val()["direction"];
+          String namVal = fb.database().ref("users")
+              .child(childSnapshot.key)
+              .child("firstName")
+              .toString() + " " +
+              fb.database().ref("users").child(childSnapshot.key).child(
+                  "lastName").toString();
+
+          students[childSnapshot.key] =
+              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+        }
+      });
+    });
+
+    fb.database().ref("rooms").child(rID).child("users").onChildChanged.listen((event) {
+      fb.database().ref("rooms").child(rID).child("users").child(event.snapshot.key).onValue.listen((event) {
+        if (event.snapshot.key != uid) {
+          studentIDs.add(event.snapshot.key);
+
+          double xval = event.snapshot.val()["x"];
+          double yval = event.snapshot.val()["y"];
+          int stepVal = event.snapshot.val()["stepStage"];
+          bool movVal = event.snapshot.val()["moving"];
+          int dirVal = event.snapshot.val()["direction"];
+          String namVal = fb.database().ref("users")
+              .child(event.snapshot.key)
+              .child("firstName")
+              .toString() + " " +
+              fb.database().ref("users").child(event.snapshot.key).child(
+                  "lastName").toString();
+
+          students[event.snapshot.key] =
+              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+        }
+      });
+    });
+  }
+
   void render(Canvas canvas) {
     super.render(canvas);
 
@@ -123,7 +195,44 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       }
     }
 
-    //box
+    //other students
+    if (students.length != null) {
+      for (int i = 0; i < studentIDs.length; i++) {
+        Paint studentPaint = Paint();
+
+        Student values = students[studentIDs[i]];
+
+        if (values.direction == 1) {
+          if (rightstep0 != null && values.moving == false) {
+            canvas.drawImage(
+                rightstep0, new Offset(values.x, values.y), studentPaint);
+          } else if (rightstep1 != null && values.stepStage == 1 &&
+              values.moving == true) {
+            canvas.drawImage(
+                rightstep1, new Offset(values.x, values.y), studentPaint);
+          } else if (rightstep2 != null && values.stepStage == 2 &&
+              values.moving == true) {
+            canvas.drawImage(
+                rightstep2, new Offset(values.x, values.y), studentPaint);
+          }
+        } else {
+          if (leftstep0 != null && values.moving == false) {
+            canvas.drawImage(
+                leftstep0, new Offset(values.x, values.y), studentPaint);
+          } else if (leftstep1 != null && values.stepStage == 1 &&
+              values.moving == true) {
+            canvas.drawImage(
+                leftstep1, new Offset(values.x, values.y), studentPaint);
+          } else if (leftstep2 != null && values.stepStage == 2 &&
+              values.moving == true) {
+            canvas.drawImage(
+                leftstep2, new Offset(values.x, values.y), studentPaint);
+          }
+        }
+      }
+    }
+
+    //user student
     Paint personPaint = Paint();
 
     if (direction == 1) {
@@ -164,7 +273,6 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
         if (x < tableLocX) {
           xBoundAtPos = topLeftX - fractionOfTablePos * 96;
           if (x > xBoundAtPos) {
-            print(x);
             return true;
           }
         } else {
@@ -211,6 +319,14 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       yposition += 3;
     }
 
+    fb.database().ref("rooms").child(rID).child("users").child(uid).set({
+      "x": xposition,
+      "y": yposition,
+      "stepStage": stepStage,
+      "moving": moving,
+      "direction": direction
+    });
+
     if (!goingLeft && !goingRight && !goingUp && !goingDown) {
       moving = false;
     } else {
@@ -221,8 +337,6 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   void resize(Size size) {
     screenSize = size;
     super.resize(size);
-
-    print(screenSize.toString());
   }
 
   @override
