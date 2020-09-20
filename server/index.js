@@ -31,7 +31,7 @@ function generateToken(channel, uid){
 	const RtcRole = require('./tokenGeneration/RtcTokenBuilder').Role;
 	const role = RtcRole.PUBLISHER;
 
-	const expirationTimeInSeconds = 3600;
+	const expirationTimeInSeconds = 86400*365;
 	const currentTimestamp = Math.floor(Date.now() / 1000);
 
 	const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
