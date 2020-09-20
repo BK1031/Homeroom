@@ -70,16 +70,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - game_assets/images/red_square.png
-    - game_assets/images/picture.jpg
-    - game_assets/images/rightstep0.png
-    - game_assets/images/rightstep1.png
-    - game_assets/images/rightstep2.png
-    - game_assets/images/leftstep0.png
-    - game_assets/images/leftstep1.png
-    - game_assets/images/leftstep2.png
-    - game_assets/images/background.png
-    - game_assets/images/table.png
+    - assets/
+    - images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
