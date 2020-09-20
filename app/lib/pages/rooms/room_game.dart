@@ -176,6 +176,36 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
         }
       });
     });
+
+    fb.database().ref("rooms").child(rID).child("users").onChildAdded.listen((event) {
+      fb.database().ref("rooms").child(rID).child("users").child(event.snapshot.key).onValue.listen((event) {
+        if (event.snapshot.key != uid) {
+          studentIDs.add(event.snapshot.key);
+
+          double xval = event.snapshot.val()["x"];
+          double yval = event.snapshot.val()["y"];
+          int stepVal = event.snapshot.val()["stepStage"];
+          bool movVal = event.snapshot.val()["moving"];
+          int dirVal = event.snapshot.val()["direction"];
+          String namVal = fb.database().ref("users")
+              .child(event.snapshot.key)
+              .child("firstName")
+              .toString() + " " +
+              fb.database().ref("users").child(event.snapshot.key).child(
+                  "lastName").toString();
+
+          students[event.snapshot.key] =
+              Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
+        }
+      });
+    });
+
+    fb.database().ref("rooms").child(rID).child("users").onChildRemoved.listen((event) {
+      fb.database().ref("rooms").child(rID).child("users").child(event.snapshot.key).onValue.listen((event) {
+        students.remove(event.snapshot.key);
+        studentIDs.remove(event.snapshot.key);
+      });
+    });
   }
 
   void render(Canvas canvas) {
