@@ -26,7 +26,8 @@ body{
 .stream-div{
     width: 200px;
     height: 200px;
-    position: absolute;
+    position: relative;
+    border: 2px black solid;
     top: auto;
     left: auto;
 }
