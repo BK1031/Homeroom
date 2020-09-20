@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flame/components/component.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/position.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame/text_config.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/keyboard.dart';
 import 'package:firebase/firebase.dart' as fb;
@@ -23,14 +26,14 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   double xposition = 0;
   double yposition = 0;
 
-  Image rightstep1;
-  Image rightstep2;
-  Image rightstep0;
-  Image leftstep1;
-  Image leftstep2;
-  Image leftstep0;
-  Image background;
-  Image table;
+  ui.Image rightstep1;
+  ui.Image rightstep2;
+  ui.Image rightstep0;
+  ui.Image leftstep1;
+  ui.Image leftstep2;
+  ui.Image leftstep0;
+  ui.Image background;
+  ui.Image table;
 
   List<double> tableLocXs = [100, 100, 400, 400, 700, 700];
   List<double> tableLocYs = [200, 600, 200, 600, 200, 600];
@@ -60,56 +63,56 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   String rID;
 
   void loadImages() {
-    Flame.images.load("rightstep0.png").then((Image value) {
+    Flame.images.load("rightstep0.png").then((ui.Image value) {
       rightstep0 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("rightstep1.png").then((Image value) {
+    Flame.images.load("rightstep1.png").then((ui.Image value) {
       rightstep1 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("rightstep2.png").then((Image value) {
+    Flame.images.load("rightstep2.png").then((ui.Image value) {
       rightstep2 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("leftstep0.png").then((Image value) {
+    Flame.images.load("leftstep0.png").then((ui.Image value) {
       leftstep0 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("leftstep1.png").then((Image value) {
+    Flame.images.load("leftstep1.png").then((ui.Image value) {
       leftstep1 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("leftstep2.png").then((Image value) {
+    Flame.images.load("leftstep2.png").then((ui.Image value) {
       leftstep2 = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("background.png").then((Image value) {
+    Flame.images.load("background.png").then((ui.Image value) {
       background = value;
     },
         onError: (e) {
           print(e.toString());
         });
 
-    Flame.images.load("table.png").then((Image value) {
+    Flame.images.load("table.png").then((ui.Image value) {
       table = value;
     },
         onError: (e) {
@@ -122,13 +125,18 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     loadImages();
 
     uid = fb.auth().currentUser.uid;
-    name = fb.database().ref("users").child(uid).child("firstName").toString()+" "+fb.database().ref("users").child(uid).child("lastName").toString();
     fb.database().ref("rooms").child(rID).child("users").child(uid).set({
       "x": xposition,
       "y": yposition,
       "stepStage": stepStage,
       "moving": moving,
       "direction": direction
+    });
+
+    fb.database().ref("users").child(uid).once("value").then((snapshot) {
+      String firstName = snapshot.snapshot.val()["firstName"];
+      String lastName = snapshot.snapshot.val()["lastName"];
+      name = firstName + lastName;
     });
 
     fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
@@ -235,7 +243,6 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     if (students.length != null) {
       for (int i = 0; i < studentIDs.length; i++) {
         Paint studentPaint = Paint();
-
         Student values = students[studentIDs[i]];
 
         if (values.direction == 1) {
@@ -288,6 +295,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
         canvas.drawImage(leftstep2, new Offset(xposition, yposition), personPaint);
       }
     }
+
+    TextConfig config = TextConfig(fontSize:  24, fontFamily: "Product Sans");
+    config.render(canvas, name, Position(xposition, yposition-30));
   }
 
   bool inTable (double x, double y) {
