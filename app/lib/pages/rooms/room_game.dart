@@ -265,6 +265,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
                 leftstep2, new Offset(values.x, values.y), studentPaint);
           }
         }
+
+        TextConfig config = TextConfig(fontSize:  24, fontFamily: "Product Sans");
+        config.render(canvas, values.name, Position(values.x, values.y-30));
       }
     }
 
