@@ -70,6 +70,8 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
    */
   int tableID = 0;
 
+  bool suspended = false;
+
   void loadImages() {
     Flame.images.load("rightstep0.png").then((ui.Image value) {
       rightstep0 = value;
@@ -149,6 +151,12 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
       "closestTable": tableID
     });
 
+    fb.database().ref("users").child(uid).once("value").then((snapshot) {
+      String firstName = snapshot.snapshot.val()["firstName"];
+      String lastName = snapshot.snapshot.val()["lastName"];
+      name = firstName + " " + lastName;
+    });
+
     fb.database().ref("rooms").child(rID).child("users").once("value").then((snapshot) {
       snapshot.snapshot.forEach((childSnapshot) {
         if (childSnapshot.key != uid) {
@@ -210,12 +218,12 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
           int stepVal = event.snapshot.val()["stepStage"];
           bool movVal = event.snapshot.val()["moving"];
           int dirVal = event.snapshot.val()["direction"];
-          String namVal = fb.database().ref("users")
-              .child(event.snapshot.key)
-              .child("firstName")
-              .toString() + " " +
-              fb.database().ref("users").child(event.snapshot.key).child(
-                  "lastName").toString();
+          String namVal = "";
+          fb.database().ref("users").child(event.snapshot.key).once("value").then((snapshot) {
+            String firstName = snapshot.snapshot.val()["firstName"];
+            String lastName = snapshot.snapshot.val()["lastName"];
+            namVal = firstName + " " + lastName;
+          });
 
           students[event.snapshot.key] =
               Student.fromValues(xval, yval, stepVal, movVal, dirVal, namVal);
@@ -232,96 +240,107 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
   }
 
   void render(Canvas canvas) {
-    super.render(canvas);
+    if (!suspended) {
+      super.render(canvas);
 
-    //background
-    if (background != null) {
-      Paint bgPaint = Paint();
-      canvas.drawImage(background, new Offset(0, 0), bgPaint);
-    }
-
-    //tables
-    if (table != null) {
-      for (int i = 0; i<tableLocXs.length; i++) {
-        Paint tbPaint = Paint();
-        canvas.drawImage(table, new Offset(tableLocXs[i], tableLocYs[i]), tbPaint);
+      //background
+      if (background != null) {
+        Paint bgPaint = Paint();
+        canvas.drawImage(background, new Offset(0, 0), bgPaint);
       }
-    }
 
-    if (teacherDesk != null) {
-      Paint tdPaint = Paint();
-      canvas.drawImage(table, new Offset(750, 100), tdPaint);
-    }
+      if (teacherDesk != null) {
+        Paint tdPaint = Paint();
+        canvas.drawImage(teacherDesk, new Offset(750, 100), tdPaint);
+      }
 
-    //other students
-    if (students.length != null) {
-      for (int i = 0; i < studentIDs.length; i++) {
-        Paint studentPaint = Paint();
-        Student values = students[studentIDs[i]];
-
-        if (values.direction == 1) {
-          if (rightstep0 != null && values.moving == false) {
-            canvas.drawImage(
-                rightstep0, new Offset(values.x, values.y), studentPaint);
-          } else if (rightstep1 != null && values.stepStage == 1 &&
-              values.moving == true) {
-            canvas.drawImage(
-                rightstep1, new Offset(values.x, values.y), studentPaint);
-          } else if (rightstep2 != null && values.stepStage == 2 &&
-              values.moving == true) {
-            canvas.drawImage(
-                rightstep2, new Offset(values.x, values.y), studentPaint);
-          }
-        } else {
-          if (leftstep0 != null && values.moving == false) {
-            canvas.drawImage(
-                leftstep0, new Offset(values.x, values.y), studentPaint);
-          } else if (leftstep1 != null && values.stepStage == 1 &&
-              values.moving == true) {
-            canvas.drawImage(
-                leftstep1, new Offset(values.x, values.y), studentPaint);
-          } else if (leftstep2 != null && values.stepStage == 2 &&
-              values.moving == true) {
-            canvas.drawImage(
-                leftstep2, new Offset(values.x, values.y), studentPaint);
-          }
+      //tables
+      if (table != null) {
+        for (int i = 0; i < tableLocXs.length; i++) {
+          Paint tbPaint = Paint();
+          canvas.drawImage(
+              table, new Offset(tableLocXs[i], tableLocYs[i]), tbPaint);
         }
-
-        TextConfig config = TextConfig(fontSize:  24, fontFamily: "Product Sans");
-        config.render(canvas, values.name, Position(values.x, values.y-30));
       }
-    }
 
-    //user student
-    Paint personPaint = Paint();
+      //other students
+      if (students.length != null) {
+        for (int i = 0; i < studentIDs.length; i++) {
+          Paint studentPaint = Paint();
+          Student values = students[studentIDs[i]];
 
-    if (direction == 1) {
-      if (rightstep0 != null && moving == false) {
-        canvas.drawImage(rightstep0, new Offset(xposition, yposition), personPaint);
-      } else if (rightstep1 != null && stepStage == 1 && moving == true) {
-        canvas.drawImage(rightstep1, new Offset(xposition, yposition), personPaint);
-      } else if (rightstep2 != null && stepStage == 2 && moving == true) {
-        canvas.drawImage(rightstep2, new Offset(xposition, yposition), personPaint);
+          if (values.direction == 1) {
+            if (rightstep0 != null && values.moving == false) {
+              canvas.drawImage(
+                  rightstep0, new Offset(values.x, values.y), studentPaint);
+            } else if (rightstep1 != null && values.stepStage == 1 &&
+                values.moving == true) {
+              canvas.drawImage(
+                  rightstep1, new Offset(values.x, values.y), studentPaint);
+            } else if (rightstep2 != null && values.stepStage == 2 &&
+                values.moving == true) {
+              canvas.drawImage(
+                  rightstep2, new Offset(values.x, values.y), studentPaint);
+            }
+          } else {
+            if (leftstep0 != null && values.moving == false) {
+              canvas.drawImage(
+                  leftstep0, new Offset(values.x, values.y), studentPaint);
+            } else if (leftstep1 != null && values.stepStage == 1 &&
+                values.moving == true) {
+              canvas.drawImage(
+                  leftstep1, new Offset(values.x, values.y), studentPaint);
+            } else if (leftstep2 != null && values.stepStage == 2 &&
+                values.moving == true) {
+              canvas.drawImage(
+                  leftstep2, new Offset(values.x, values.y), studentPaint);
+            }
+          }
+
+          TextConfig config = TextConfig(
+              fontSize: 24, fontFamily: "Product Sans");
+          config.render(canvas, values.name, Position(values.x, values.y - 30));
+        }
       }
-    } else {
-      if (leftstep0 != null && moving == false) {
-        canvas.drawImage(leftstep0, new Offset(xposition, yposition), personPaint);
-      } else if (leftstep1 != null && stepStage == 1 && moving == true) {
-        canvas.drawImage(leftstep1, new Offset(xposition, yposition), personPaint);
-      } else if (leftstep2 != null && stepStage == 2 && moving == true) {
-        canvas.drawImage(leftstep2, new Offset(xposition, yposition), personPaint);
+
+      //user student
+      Paint personPaint = Paint();
+
+      if (direction == 1) {
+        if (rightstep0 != null && moving == false) {
+          canvas.drawImage(
+              rightstep0, new Offset(xposition, yposition), personPaint);
+        } else if (rightstep1 != null && stepStage == 1 && moving == true) {
+          canvas.drawImage(
+              rightstep1, new Offset(xposition, yposition), personPaint);
+        } else if (rightstep2 != null && stepStage == 2 && moving == true) {
+          canvas.drawImage(
+              rightstep2, new Offset(xposition, yposition), personPaint);
+        }
+      } else {
+        if (leftstep0 != null && moving == false) {
+          canvas.drawImage(
+              leftstep0, new Offset(xposition, yposition), personPaint);
+        } else if (leftstep1 != null && stepStage == 1 && moving == true) {
+          canvas.drawImage(
+              leftstep1, new Offset(xposition, yposition), personPaint);
+        } else if (leftstep2 != null && stepStage == 2 && moving == true) {
+          canvas.drawImage(
+              leftstep2, new Offset(xposition, yposition), personPaint);
+        }
       }
-    }
 
-    TextConfig config = TextConfig(fontSize:  24, fontFamily: "Product Sans");
-    config.render(canvas, name, Position(xposition, yposition-30));
+      TextConfig config = TextConfig(fontSize: 24, fontFamily: "Product Sans");
+      config.render(canvas, name, Position(xposition, yposition - 30));
 
-    TextConfig tableConfig = TextConfig(fontSize:  48, fontFamily: "Product Sans");
-    String tableText = "At Table "+tableID.toString();
-    if (tableID == 0) {
-      tableText = "At Teacher Desk";
+      TextConfig tableConfig = TextConfig(
+          fontSize: 48, fontFamily: "Product Sans");
+      String tableText = "At Table " + tableID.toString();
+      if (tableID == 0) {
+        tableText = "At Teacher Desk";
+      }
+      tableConfig.render(canvas, tableText, Position(10, 10));
     }
-    tableConfig.render(canvas, tableText, Position(10, 10));
   }
 
   bool inTable (double x, double y) {
@@ -380,8 +399,8 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     tableID = 0;
 
     for (int i = 0; i < 6; i++) {
-      double midTableX = tableLocXs[i] + 196;
-      double midTableY = tableLocYs[i] + 256;
+      double midTableX = tableLocXs[i] + 96;
+      double midTableY = tableLocYs[i] + 128;
 
       double toTable = pow((midStudentX - midTableX), 2) + pow((midStudentY - midTableY), 2);
       if (toTable < shortestDistance) {
@@ -391,58 +410,80 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
     }
   }
 
+
+
   void update(double t) {
-    if (moving) {
-      stepTimer += 1;
-      if (stepTimer >= 10) {
-        stepTimer = 0;
-        if (stepStage == 1) {
-          stepStage = 2;
-        } else if (stepStage == 2) {
-          stepStage = 1;
+    if (!suspended) {
+      if (moving) {
+        stepTimer += 1;
+        if (stepTimer >= 10) {
+          stepTimer = 0;
+          if (stepStage == 1) {
+            stepStage = 2;
+          } else if (stepStage == 2) {
+            stepStage = 1;
+          }
         }
       }
-    }
 
-    super.update(t);
+      super.update(t);
 
-    if (goingLeft && !goingRight && xposition > 0 && !inTeacherDesk(xposition-3, yposition) && !inTable(xposition - 3, yposition)) {
-      xposition -= 3;
-      direction = -1;
-    }
+      if (goingLeft && !goingRight && xposition > 0 &&
+          !inTeacherDesk(xposition - 3, yposition) &&
+          !inTable(xposition - 3, yposition)) {
+        xposition -= 3;
+        direction = -1;
+      }
 
-    if (goingRight && !goingLeft && xposition < 900 && !inTeacherDesk(xposition+3, yposition) && !inTable(xposition + 3, yposition)) {
-      xposition += 3;
-      direction = 1;
-    }
+      if (goingRight && !goingLeft && xposition < 900 &&
+          !inTeacherDesk(xposition + 3, yposition) &&
+          !inTable(xposition + 3, yposition)) {
+        xposition += 3;
+        direction = 1;
+      }
 
-    if (goingUp && !goingDown && yposition > 120 && !inTeacherDesk(xposition, yposition-3) && !inTable(xposition, yposition - 3)) {
-      yposition -= 3;
-    }
+      if (goingUp && !goingDown && yposition > 120 &&
+          !inTeacherDesk(xposition, yposition - 3) &&
+          !inTable(xposition, yposition - 3)) {
+        yposition -= 3;
+      }
 
-    if (goingDown && !goingUp && yposition < 900 && !inTeacherDesk(xposition, yposition+3) && !inTable(xposition, yposition + 3)) {
-      yposition += 3;
-    }
+      if (goingDown && !goingUp && yposition < 900 &&
+          !inTeacherDesk(xposition, yposition + 3) &&
+          !inTable(xposition, yposition + 3)) {
+        yposition += 3;
+      }
 
-    setClosestTable();
+      setClosestTable();
 
-    fb.database().ref("rooms").child(rID).child("users").child(uid).update({
-      "x": xposition,
-      "y": yposition,
-      "stepStage": stepStage,
-      "moving": moving,
-      "direction": direction,
-      "closestTable": tableID
-    });
+      fb.database().ref("rooms").child(rID).child("users").child(uid).update({
+        "x": xposition,
+        "y": yposition,
+        "stepStage": stepStage,
+        "moving": moving,
+        "direction": direction,
+        "closestTable": tableID
+      });
 
-    fb.database().ref("rooms").child(rID).child("tables").child(tableID.toString()).update({
-      uid: name
-    });
+      for (int i = 0; i <= 6; i++) {
+        if (i != tableID) {
+          fb.database().ref("rooms").child(rID).child("tables").child(
+              i.toString()).update({
+            uid: false
+          });
+        }
+      }
 
-    if (!goingLeft && !goingRight && !goingUp && !goingDown) {
-      moving = false;
-    } else {
-      moving = true;
+      fb.database().ref("rooms").child(rID).child("tables").child(
+          tableID.toString()).update({
+        uid: true
+      });
+
+      if (!goingLeft && !goingRight && !goingUp && !goingDown) {
+        moving = false;
+      } else {
+        moving = true;
+      }
     }
   }
 
@@ -479,5 +520,9 @@ class ClassroomGame extends BaseGame with KeyboardEvents {
         goingDown = false;
       }
     }
+  }
+
+  void suspend () {
+    suspended = true;
   }
 }
