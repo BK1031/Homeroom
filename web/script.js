@@ -8,8 +8,6 @@ let handleFail = function(err){
 };
 
 let remoteContainer = document.getElementById("remote-container");
-let cameraToggleBtn = document.getElementById("camera-toggle");
-let micToggleBtn = document.getElementById("mic-toggle");
 
 //------------------------------------------------------------------------------------------------------------------------
 
@@ -56,7 +54,7 @@ function createNewChannel(channel){
 
 var urlHash = window.location.hash;
 if(urlHash){
-    options.uid = parseInt(urlHash.split('#')[1]);
+    options.uid = urlHash.split('#')[1];
     let channel = urlHash.split('#')[2];
     if(channel != null){
         createNewChannel(channel);
@@ -114,11 +112,11 @@ function joinChannel() {
         localStream.init(()=>{
             client.publish(localStream, handleFail);
             let streamId = String(localStream.getId());
+            addMuteUnmuteListeners();
             localStream.play('my-stream');
             localStream.play(streamId);
         });
     }, handleFail);
-    addMuteUnmuteListeners();
 }
 
 client.on('stream-added', function(evt){
@@ -151,50 +149,22 @@ client.on('peer-leave', function(evt){
 //---------------------------------------------------------------------------------------------
 
 
-micToggleBtn.addEventListener("click",()=>{
-    if(localStream.isAudioOn()) {
-        localStream.muteAudio();
-        micToggleBtn.innerHTML = 'turn mic on';
-    } else {
-        localStream.unmuteAudio();
-        micToggleBtn.innerHTML = 'turn mic off';
-    }
-});
-
-cameraToggleBtn.addEventListener("click",()=>{
-    if(localStream.isVideoOn()) {
-        localStream.muteVideo();
-        cameraToggleBtn.innerHTML = 'turn camera on';
-    } else {
-        localStream.unmuteVideo();
-        cameraToggleBtn.innerHTML = 'turn camera off';
-    }
-});
-
 function addMuteUnmuteListeners() {
     db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
-        if (snapshot.val() == "True") {
+        if (snapshot.val() == true) {
             localStream.unmuteAudio();
-            alert("True");
-            micToggleBtn.innerHTML = 'turn mic off';
         }
         else {
             localStream.muteAudio();
-            alert("False");
-            micToggleBtn.innerHTML = 'turn mic on';
         }
     });
 
     db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
-        if (snapshot.val() == "True") {
+        if (snapshot.val() == true) {
             localStream.unmuteVideo();
-            alert("True");
-            cameraToggleBtn.innerHTML = 'turn camera off';
         }
         else {
             localStream.muteVideo();
-            alert("False");
-            cameraToggleBtn.innerHTML = 'turn camera on';
         }
     });
 }
