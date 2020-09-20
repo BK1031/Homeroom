@@ -3,6 +3,7 @@
 var localStream = null;
 var localStreamDiv = null;
 
+
 let handleFail = function(err){
     console.log("Error : ", err);
 };
@@ -105,9 +106,15 @@ function modifyAudio(id) {
 
 function joinChannel() {
     client.join(options.token, options.channel, options.uid, (uid)=>{
+        var screenOn = false;
+        db.ref('rooms/'+options.channel+'/users/'+options.uid+'/screen').on('value', function(snapshot){
+          screenOn = snapshot.val()
+          alert(screenOn)
+        }
         localStream = AgoraRTC.createStream({
             video: true,
             audio: true,
+            screen: screenOn;
         });
         localStream.init(()=>{
             client.publish(localStream, handleFail);
