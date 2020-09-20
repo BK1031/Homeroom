@@ -118,6 +118,7 @@ function joinChannel() {
             localStream.play(streamId);
         });
     }, handleFail);
+    addMuteUnmuteListeners();
 }
 
 client.on('stream-added', function(evt){
@@ -170,31 +171,33 @@ cameraToggleBtn.addEventListener("click",()=>{
     }
 });
 
-db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
-    if (snapshot.val() == "True") {
-        localStream.unmuteAudio();
-        alert("True");
-        micToggleBtn.innerHTML = 'turn mic off';
-    }
-    else {
-        localStream.muteAudio();
-        alert("False");
-        micToggleBtn.innerHTML = 'turn mic on';
-    }
-});
+function addMuteUnmuteListeners() {
+    db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
+        if (snapshot.val() == "True") {
+            localStream.unmuteAudio();
+            alert("True");
+            micToggleBtn.innerHTML = 'turn mic off';
+        }
+        else {
+            localStream.muteAudio();
+            alert("False");
+            micToggleBtn.innerHTML = 'turn mic on';
+        }
+    });
 
-db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
-    if (snapshot.val() == "True") {
-        localStream.unmuteVideo();
-        alert("True");
-        cameraToggleBtn.innerHTML = 'turn camera off';
-    }
-    else {
-        localStream.muteVideo();
-        alert("False");
-        cameraToggleBtn.innerHTML = 'turn camera on';
-    }
-});
+    db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
+        if (snapshot.val() == "True") {
+            localStream.unmuteVideo();
+            alert("True");
+            cameraToggleBtn.innerHTML = 'turn camera off';
+        }
+        else {
+            localStream.muteVideo();
+            alert("False");
+            cameraToggleBtn.innerHTML = 'turn camera on';
+        }
+    });
+}
 
 
 //---------------------------------------------------------------------------------------------
