@@ -70,8 +70,21 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
+<<<<<<< HEAD
     - assets/
     - images/
+=======
+    - assets/images/red_square.png
+    - assets/images/picture.jpg
+    - assets/images/rightstep0.png
+    - assets/images/rightstep1.png
+    - assets/images/rightstep2.png
+    - assets/images/leftstep0.png
+    - assets/images/leftstep1.png
+    - assets/images/leftstep2.png
+    - assets/images/background.png
+    - assets/images/table.png
+>>>>>>> ef866f23aedc921baba93d840f98caf3e788d6b3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
