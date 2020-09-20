@@ -1,3 +1,19 @@
+
+
+var localStream = null;
+var localStreamDiv = null;
+
+let handleFail = function(err){
+    console.log("Error : ", err);
+};
+
+let remoteContainer = document.getElementById("remote-container");
+let cameraToggleBtn = document.getElementById("camera-toggle");
+let micToggleBtn = document.getElementById("mic-toggle");
+
+//------------------------------------------------------------------------------------------------------------------------
+
+
 // default room and default user id
 
 var options = {
@@ -6,6 +22,15 @@ var options = {
     token: '0060635469ee0d748a28432cfe30e80507cIAD5RJh3wPsJK8/BQCWiYeGM4n5z5490yoDERtQ7ObgXMSo6c+QAAAAAEAAzuiAF3wtnXwEAAQDfC2df',
     uid: null,
 }
+
+
+let client = AgoraRTC.createClient({
+    mode: 'rtc',
+    codec: 'vp8',
+});
+
+client.init(options.appId, handleFail);
+
 
 var urlHash = window.location.hash;
 if(urlHash){
@@ -29,20 +54,12 @@ if(urlHash){
             });
         }
     });
+} else {
+    joinChannel();
 }
 
 
 
-var localStream = null;
-var localStreamDiv = null;
-
-let handleFail = function(err){
-    console.log("Error : ", err);
-};
-
-let remoteContainer = document.getElementById("remote-container");
-let cameraToggleBtn = document.getElementById("camera-toggle");
-let micToggleBtn = document.getElementById("mic-toggle");
 
 //---------------------------------------------------------------------------------------------
 
@@ -78,12 +95,6 @@ function modifyAudio(id) {
 
 //---------------------------------------------------------------------------------------------
 
-let client = AgoraRTC.createClient({
-    mode: 'rtc',
-    codec: 'vp8',
-});
-
-client.init(options.appId, handleFail);
 
 function joinChannel() {
     client.join(options.token, options.channel, options.uid, (uid)=>{
@@ -178,28 +189,6 @@ function updatePositionListener(id) {
 // var difX, difY;
 
 localStreamDiv = addStream('my-stream');
-<<<<<<< HEAD
-localStreamDiv.setAttribute('draggable','true');
-localStreamDiv.addEventListener("dragstart", function(ev){
-    difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
-    difY = ev.clientY - localStreamDiv.getBoundingClientRect().top;
-});
-remoteContainer.addEventListener("dragover", function(ev){
-    ev.preventDefault();
-});
-remoteContainer.addEventListener("drop", function(ev){
-    ev.preventDefault();
-    var newX = ev.clientX - difX - remoteContainer.getBoundingClientRect().left;
-    var newY = ev.clientY - difY - remoteContainer.getBoundingClientRect().top; 
-    newX = Math.round(newX/unitSize)*unitSize;
-    newY = Math.round(newY/unitSize)*unitSize;
-    localStreamDiv.style.left = newX+'px';
-    localStreamDiv.style.top = newY+'px';
-    db.ref('rooms/'+options.channel+'/users').child(String(localStream.getId())).update({
-        x: newX, y: newY,
-    });
-});
-=======
 localStreamDiv.setAttribute('draggable','false');
 // localStreamDiv.addEventListener("dragstart", function(ev){
 //     difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
@@ -220,4 +209,3 @@ localStreamDiv.setAttribute('draggable','false');
 //         x: newX, y: newY,
 //     });
 // });
->>>>>>> 04e4c3e47b52d8d315cb1c8bab0468b7e42ed0ac
