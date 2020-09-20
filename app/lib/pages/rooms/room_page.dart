@@ -15,7 +15,7 @@ class _RoomPageState extends State<RoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    ClassroomGame game = ClassroomGame();
+    ClassroomGame game = ClassroomGame(id);
     return Scaffold(
       body: game.widget,
     );
