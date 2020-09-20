@@ -150,25 +150,25 @@ client.on('peer-leave', function(evt){
 //---------------------------------------------------------------------------------------------
 
 
-// micToggleBtn.addEventListener("click",()=>{
-//     if(localStream.isAudioOn()) {
-//         localStream.muteAudio();
-//         micToggleBtn.innerHTML = 'turn mic on';
-//     } else {
-//         localStream.unmuteAudio();
-//         micToggleBtn.innerHTML = 'turn mic off';
-//     }
-// });
+micToggleBtn.addEventListener("click",()=>{
+    if(localStream.isAudioOn()) {
+        localStream.muteAudio();
+        micToggleBtn.innerHTML = 'turn mic on';
+    } else {
+        localStream.unmuteAudio();
+        micToggleBtn.innerHTML = 'turn mic off';
+    }
+});
 
-// cameraToggleBtn.addEventListener("click",()=>{
-//     if(localStream.isVideoOn()) {
-//         localStream.muteVideo();
-//         cameraToggleBtn.innerHTML = 'turn camera on';
-//     } else {
-//         localStream.unmuteVideo();
-//         cameraToggleBtn.innerHTML = 'turn camera off';
-//     }
-// });
+cameraToggleBtn.addEventListener("click",()=>{
+    if(localStream.isVideoOn()) {
+        localStream.muteVideo();
+        cameraToggleBtn.innerHTML = 'turn camera on';
+    } else {
+        localStream.unmuteVideo();
+        cameraToggleBtn.innerHTML = 'turn camera off';
+    }
+});
 
 db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
     if (snapshot.val() == "True") {
