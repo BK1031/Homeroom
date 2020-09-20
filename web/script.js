@@ -184,27 +184,5 @@ window.onunload = function() {
 
 //---------------------------------------------------------------------------------------------
 
-// let unitSize = 40;
-// var difX, difY;
 
 localStreamDiv = addStream('my-stream');
-//localStreamDiv.setAttribute('draggable','false');
-// localStreamDiv.addEventListener("dragstart", function(ev){
-//     difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
-//     difY = ev.clientY - localStreamDiv.getBoundingClientRect().top;
-// });
-// remoteContainer.addEventListener("dragover", function(ev){
-//     ev.preventDefault();
-// });
-// remoteContainer.addEventListener("drop", function(ev){
-//     ev.preventDefault();
-//     var newX = ev.clientX - difX - remoteContainer.getBoundingClientRect().left;
-//     var newY = ev.clientY - difY - remoteContainer.getBoundingClientRect().top;
-//     newX = Math.round(newX/unitSize)*unitSize;
-//     newY = Math.round(newY/unitSize)*unitSize;
-//     localStreamDiv.style.left = newX+'px';
-//     localStreamDiv.style.top = newY+'px';
-//     db.ref('rooms/'+options.channel).child(String(localStream.getId())).update({
-//         x: newX, y: newY,
-//     });
-// });
