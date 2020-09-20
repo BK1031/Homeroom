@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/pages/auth/check_auth_page.dart';
 import 'package:homeroom_flutter/pages/auth/login_page.dart';
 import 'package:homeroom_flutter/pages/auth/register_page.dart';
+import 'package:homeroom_flutter/pages/classroom/classroom_chat_page.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_details_page.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_page.dart';
 import 'package:homeroom_flutter/pages/home_page.dart';
@@ -47,6 +48,9 @@ void main() {
   }));
   router.define('/classroom/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ClassroomDetailsPage(params["id"][0]);
+  }));
+  router.define('/classroom/:id/chat', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new ClassroomChatPage(params["id"][0]);
   }));
 
   // ROOM ROUTES
