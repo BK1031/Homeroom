@@ -24,16 +24,11 @@ body{
     margin: 0px;
 }
 .stream-div{
-    /* position: absolute;
-    width: 80px;
-    height: 80px; */
     width: 200px;
     height: 200px;
-    /* Center vertically and horizontally */
     position: absolute;
-    top: 20%;
-    left: 45%;
-    margin: -25px 0 0 -25px;
+    top: auto;
+    left: auto;
 }
 #remote-container{
     position: relative !important;
@@ -50,11 +45,6 @@ body{
 #my-stream{
     width: 200px;
     height: 200px;
-    /* Center vertically and horizontally */
-    position: absolute;
-    top: 20%;
-    left: 45%;
-    margin: -25px 0 0 -25px;
     border: 2px lightseagreen solid;
     z-index: 2;
 }
