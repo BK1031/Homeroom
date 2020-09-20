@@ -54,9 +54,6 @@ void main() {
   }));
 
   // ROOM ROUTES
-  router.define('/room/new', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new ClassroomPage();
-  }));
   router.define('/room/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new RoomPage(params["id"][0]);
   }));
