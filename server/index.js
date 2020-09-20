@@ -17,8 +17,42 @@ admin.initializeApp({
 
 var db = admin.database().ref();
 
+
+// --------------------------------------------------------------------------------
+
+const options = {
+    appId: '0635469ee0d748a28432cfe30e80507c',
+    certificate: '0bd05f462de94e45bcb615b54f8f6d6d',
+}
+
+
+function generateToken(channel, uid){
+	const RtcTokenBuilder = require('./tokenGeneration/RtcTokenBuilder').RtcTokenBuilder;
+	const RtcRole = require('./tokenGeneration/RtcTokenBuilder').Role;
+	const role = RtcRole.PUBLISHER;
+
+	const expirationTimeInSeconds = 3600;
+	const currentTimestamp = Math.floor(Date.now() / 1000);
+
+	const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+
+	// Build token with uid
+	const token = RtcTokenBuilder.buildTokenWithUid(options.appId, options.certificate, channel, uid, role, privilegeExpiredTs);
+	console.log("Token With Integer Number Uid: " + token);
+	return token;
+}
+
+
+
 db.child("rooms").on("child_added", function(snapshot, prevChildKey) {
     // New room was created
     console.log(snapshot.key);
-    var room = snapshot.val();
+    let channel = snapshot.key;
+    let token = generateToken(channel, 0);
+    db.ref("rooms/channel").update({
+    	token: token,
+    });
 });
+
+
+
