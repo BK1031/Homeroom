@@ -66,7 +66,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       onPressed: () {
                         router.navigateTo(context, "/register", transition: TransitionType.fadeIn);
                       },
-                    )
+                    ),
+                    new Padding(padding: EdgeInsets.all(32)),
+                    new Text(appVersion.toString())
                   ],
                 ),
               ),

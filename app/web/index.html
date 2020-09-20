@@ -36,5 +36,12 @@
     }
   </script>
   <script src="main.dart.js" type="application/javascript"></script>
+  <script>
+    function requestWebcamAudio() {
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      }
+    }
+  </script>
 </body>
 </html>

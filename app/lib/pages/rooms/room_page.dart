@@ -1,12 +1,15 @@
 import 'package:easy_web_view/easy_web_view.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:homeroom_flutter/pages/classroom/classroom_chat_page.dart';
 import 'package:homeroom_flutter/pages/rooms/room_game.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:homeroom_flutter/utils/config.dart';
 import 'package:homeroom_flutter/utils/theme.dart';
 import 'package:firebase/firebase.dart' as fb;
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:js' as js;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class RoomPage extends StatefulWidget {
@@ -22,7 +25,7 @@ class _RoomPageState extends State<RoomPage> {
   String src = "https://flutter.dev";
 
   bool video = true;
-  bool audio = false;
+  bool audio = true;
   bool screen = false;
 
   _RoomPageState(this.id);
@@ -39,6 +42,7 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   setupRoomUrl() {
+    js.context.callMethod("requestWebcamAudio");
     setState(() {
       src = "https://homeroom.bk1031.dev/room#${currUser.id}#$id";
     });
@@ -73,6 +77,7 @@ class _RoomPageState extends State<RoomPage> {
                                   flex: 1,
                                   child: EasyWebView(
                                       src: src,
+                                      headers: {"Feature-Policy": "microphone '*'; camera '*'"},
                                       onLoaded: () {
                                         print('$key: Loaded: $src');
                                       },
@@ -85,6 +90,9 @@ class _RoomPageState extends State<RoomPage> {
                         ),
                       ),
                     ),
+                    new Linkify(text: src, onOpen: (src) {
+                      launch(src.url);
+                    }),
                     new Expanded(
                       child: new Container(
                         width: double.maxFinite,

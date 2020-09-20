@@ -4,7 +4,7 @@ import 'package:homeroom_flutter/models/user.dart';
 
 import '../models/version.dart';
 
-Version appVersion = new Version("1.6.4+1");
+Version appVersion = new Version("1.0.4+1");
 String appStatus = "";
 String appFull = "Version ${appVersion.toString()}";
 
