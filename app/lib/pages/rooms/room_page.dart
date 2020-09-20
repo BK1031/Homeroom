@@ -19,6 +19,11 @@ class _RoomPageState extends State<RoomPage> {
   String id;
   static ValueKey key = ValueKey('key_0');
   String src = "https://flutter.dev";
+
+  bool video = true;
+  bool audio = false;
+  bool screen = false;
+
   _RoomPageState(this.id);
 
   @override
@@ -26,10 +31,15 @@ class _RoomPageState extends State<RoomPage> {
     super.initState();
     fb.database().ref("rooms").child(id).child("users").child(currUser.id).set({
       "audio": false,
-      "video": true
+      "video": true,
+      "screen": false
     });
+    setupRoomUrl();
+  }
+
+  setupRoomUrl() {
     setState(() {
-      src = "/Users/bharat/Documents/Projects/Dev Projects/Flutter Apps/homeroom/web/room.html#${currUser.id}#$id";
+      src = "https://homeroom.bk1031.dev/room#${currUser.id}#$id";
     });
   }
 
@@ -73,9 +83,12 @@ class _RoomPageState extends State<RoomPage> {
                         ),
                       ),
                     ),
-                    new Container(
-                      color: Colors.lightGreenAccent,
-                      child: new Text("game goes here"),
+                    new Expanded(
+                      child: new Container(
+                        width: double.maxFinite,
+                        color: Colors.lightGreenAccent,
+                        child: game.widget,
+                      ),
                     )
                   ],
                 ),
@@ -89,9 +102,94 @@ class _RoomPageState extends State<RoomPage> {
                     child: new ClassroomChatPage(id),
                   ),
                   new Container(
+                    padding: EdgeInsets.all(8),
                     child: new Column(
                       children: [
-                        new Text("controls or smth go here")
+                        new Text("My Controls", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                        new Padding(padding: EdgeInsets.all(2)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            new Expanded(
+                              child: new Card(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                                color: currCardColor,
+                                child: new InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      video = !video;
+                                    });
+                                    fb.database().ref("rooms").child(id).child("users").child(currUser.id).child("video").set(video);
+                                  },
+                                  child: new Container(
+                                    height: 100,
+                                    width: 100,
+                                    padding: EdgeInsets.all(8),
+                                    child: new Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        new Icon(video ? Icons.videocam : Icons.videocam_off, size: 50, color: Colors.grey,),
+                                        new Text(video ? "Turn Off" : "Turn On", style: TextStyle(color: Colors.grey),)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            new Padding(padding: EdgeInsets.all(4)),
+                            new Expanded(
+                              child: new Card(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                                color: currCardColor,
+                                child: new InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      audio = !audio;
+                                    });
+                                    fb.database().ref("rooms").child(id).child("users").child(currUser.id).child("audio").set(audio);
+                                  },
+                                  child: new Container(
+                                    height: 100,
+                                    width: 100,
+                                    padding: EdgeInsets.all(8),
+                                    child: new Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        new Icon(audio ? Icons.mic : Icons.mic_off, size: 50, color: Colors.grey,),
+                                        new Text(audio ? "Mute" : "Unmute", style: TextStyle(color: Colors.grey),)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        new Padding(padding: EdgeInsets.all(2)),
+                        new Card(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                          color: currCardColor,
+                          child: new InkWell(
+                            onTap: () {
+                              setState(() {
+                                screen = !screen;
+                              });
+                              fb.database().ref("rooms").child(id).child("users").child(currUser.id).child("screen").set(screen);
+                            },
+                            child: new Container(
+                              height: 75,
+                              width: double.infinity,
+                              padding: EdgeInsets.all(8),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  new Icon(screen ? Icons.stop_screen_share : Icons.screen_share, size: 50, color: Colors.grey,),
+                                  new Text(screen ? "Stop Sharing" : "Share Screen", style: TextStyle(color: Colors.grey, fontSize: 20),)
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   )
