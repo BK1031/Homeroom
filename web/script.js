@@ -14,7 +14,7 @@ let micToggleBtn = document.getElementById("mic-toggle");
 //------------------------------------------------------------------------------------------------------------------------
 
 
-// default room and default user id
+// DONT USE default room and default user id
 
 var options = {
     appId: '0635469ee0d748a28432cfe30e80507c',
@@ -114,10 +114,6 @@ function joinChannel() {
         localStream.init(()=>{
             client.publish(localStream, handleFail);
             let streamId = String(localStream.getId());
-            db.ref('rooms/'+options.channel+'/users/'+streamId).set({
-                x: 0,
-                y: 0,
-            });
             localStream.play('my-stream');
             localStream.play(streamId);
         });
@@ -153,30 +149,53 @@ client.on('peer-leave', function(evt){
 
 //---------------------------------------------------------------------------------------------
 
+
+micToggleBtn.addEventListener("click",()=>{
+    if(localStream.isAudioOn()) {
+        localStream.muteAudio();
+        micToggleBtn.innerHTML = 'turn mic on';
+    } else {
+        localStream.unmuteAudio();
+        micToggleBtn.innerHTML = 'turn mic off';
+    }
+});
+
 cameraToggleBtn.addEventListener("click",()=>{
     if(localStream.isVideoOn()) {
         localStream.muteVideo();
+        cameraToggleBtn.innerHTML = 'turn camera on';
     } else {
         localStream.unmuteVideo();
+        cameraToggleBtn.innerHTML = 'turn camera off';
     }
 });
 
-// db.ref('rooms/'+option.channel+'/users/'+'1234'+'/audio').on('value', function(snapshot){
-//   if (snapshot.val() == "True") {
-//     console.log("True");
-//   }
-//   else {
-//     console.log("False");
-//   }
-// }
-
-micToggleBtn.addEventListener("click",()=>{
-    if(localStream.isAudioOn()){
-        localStream.muteAudio();
-    } else {
+db.ref('rooms/'+options.channel+'/users/'+options.uid+'/audio').on('value', function(snapshot){
+    if (snapshot.val() == "True") {
         localStream.unmuteAudio();
+        console.log("True");
+        micToggleBtn.innerHTML = 'turn mic on';
+    }
+    else {
+        localStream.muteAudio();
+        console.log("False");
+        micToggleBtn.innerHTML = 'turn mic off';
     }
 });
+
+db.ref('rooms/'+options.channel+'/users/'+options.uid+'/video').on('value', function(snapshot){
+    if (snapshot.val() == "True") {
+        localStream.unmuteVideo();
+        console.log("True");
+        cameraToggleBtn.innerHTML = 'turn camera on';
+    }
+    else {
+        localStream.muteVideo();
+        console.log("False");
+        cameraToggleBtn.innerHTML = 'turn camera off';
+    }
+});
+
 
 //---------------------------------------------------------------------------------------------
 
@@ -189,17 +208,6 @@ window.onunload = function() {
     }, handleFail);
 };
 
-var tempDiv = null;
-function updatePositionListener(id) {
-    db.ref('rooms/'+options.channel+'/users/'+id).on(
-        'value', function(snapshot){
-            let data = snapshot.val();
-            tempDiv = document.getElementById(id);
-            tempDiv.style.left = data.x+'px';
-            tempDiv.style.top = data.y+'px';
-        }
-    )
-}
 
 //---------------------------------------------------------------------------------------------
 
@@ -207,7 +215,7 @@ function updatePositionListener(id) {
 // var difX, difY;
 
 localStreamDiv = addStream('my-stream');
-localStreamDiv.setAttribute('draggable','false');
+//localStreamDiv.setAttribute('draggable','false');
 // localStreamDiv.addEventListener("dragstart", function(ev){
 //     difX = ev.clientX - localStreamDiv.getBoundingClientRect().left;
 //     difY = ev.clientY - localStreamDiv.getBoundingClientRect().top;
