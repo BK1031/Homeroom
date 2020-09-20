@@ -87,8 +87,7 @@ class _RoomPageState extends State<RoomPage> {
                     new Expanded(
                       child: new Container(
                         width: double.maxFinite,
-                        color: Colors.lightGreenAccent,
-                        child: game.widget,
+                        child: Center(child: game.widget),
                       ),
                     )
                   ],
@@ -199,8 +198,8 @@ class _RoomPageState extends State<RoomPage> {
                           color: Colors.red,
                           child: new InkWell(
                             onTap: () {
-                              fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
                               router.navigateTo(context, "/home", transition: TransitionType.native);
+                              fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
                             },
                             child: new Container(
                               height: 75,
