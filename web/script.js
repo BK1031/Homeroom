@@ -5,6 +5,9 @@ var localStreamDiv = null;
 var screenStream = null;
 var screenStreamDiv = null;
 
+var userPos = [0,0];
+var otherPos = {}; // dictionary of objects id:{x, y, stream}
+// volume is 0 to 100, computed based on user's distance from other user
 
 let handleFail = function(err){
     console.log("Error : ", err);
@@ -131,8 +134,13 @@ client.on('stream-subscribed', function(evt){
     let streamId = String(stream.getId());
     addStream(streamId);
     stream.play(streamId);
+    // stream.setAudioVolume(5);
+    otherPos[streamId] = {
+        stream: stream,
+        x: 0,
+        y: 0,
+    };
     //modifyAudio(streamId);
-    updatePositionListener(streamId);
 });
 
 client.on('stream-removed', function(evt){
@@ -150,6 +158,16 @@ client.on('peer-leave', function(evt){
 });
 
 //---------------------------------------------------------------------------------------------
+
+
+function computeVolume(otherUser) {
+    let deltaX = otherUser.x - userPos[0];
+    let deltaY = otherUser.y - userPos[1];
+    let dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    var volume = 100.0-dist/10.0;
+    volume = Math.max(volume, 0);
+    otherUser.stream.setAudioVolume(volume);
+}
 
 
 function addMuteUnmuteListeners() {
@@ -171,24 +189,31 @@ function addMuteUnmuteListeners() {
         }
     });
 
-    // db.ref('rooms/'+options.channel+'/users/'+options.uid+'/screen').on('value', function(snapshot){
-    //     if(snapshot.val()){
-    //         localStream = AgoraRTC.createStream({
-    //             video: true,
-    //             audio: true,
-    //         });
-    //         localStream.init(()=>{
-    //             client.publish(screenStream, handleFail);
-    //             let streamId = String(screenStream.getId());
-    //             addMuteUnmuteListeners();
-    //             screenStream.play('screen-stream');
-    //             screenStream.play(streamId);
-    //             screenStreamDiv = addStream('screen-stream');
-    //         });
-    //     } else {
-
-    //     }
-    // });
+    db.ref('rooms/'+options.channel+'/users/').on('child_added', function(userSnapshot){
+        alert('child!');
+        if(userSnapshot.key == options.uid){ // is user
+            db.ref('rooms/'+options.channel+'/users/'+userSnapshot.key).on('value', function(snapshot){
+                let data = snapshot.val();
+                if (data!=null) {
+                    userPos[0] = data.x;
+                    userPos[1] = data.y;
+                    for(id in Object.keys(otherPos)){
+                        computeVolume(otherPos[id]);
+                    }
+                }
+            });
+        } else {
+            db.ref('rooms/'+options.channel+'/users/'+userSnapshot.key).on('value', function(snapshot){
+                let data = snapshot.val();
+                if (data!=null) {
+                    otherPos[userSnapshot.key].x = data.x;
+                    otherPos[userSnapshot.key].y = data.y;
+                    computeVolume(otherPos[userSnapshot.key]);
+                }
+            });
+        }
+        
+    });
 
 }
 
