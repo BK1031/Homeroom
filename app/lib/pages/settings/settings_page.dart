@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/utils/config.dart';
 import 'package:homeroom_flutter/utils/theme.dart';
 
-class ClassroomPage extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   @override
-  _ClassroomPageState createState() => _ClassroomPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _ClassroomPageState extends State<ClassroomPage> {
+class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,8 +49,8 @@ class _ClassroomPageState extends State<ClassroomPage> {
                             padding: EdgeInsets.all(8),
                             child: new Column(
                               children: [
-                                new Icon(Icons.class_, color: mainColor),
-                                new Text("Classes", style: TextStyle(color: mainColor),)
+                                new Icon(Icons.class_, color: Colors.grey),
+                                new Text("Classes", style: TextStyle(color: Colors.grey),)
                               ],
                             ),
                           ),
@@ -63,8 +63,8 @@ class _ClassroomPageState extends State<ClassroomPage> {
                             padding: EdgeInsets.all(8),
                             child: new Column(
                               children: [
-                                new Icon(Icons.settings, color: Colors.grey),
-                                new Text("Settings", style: TextStyle(color: Colors.grey),)
+                                new Icon(Icons.settings, color: mainColor),
+                                new Text("Settings", style: TextStyle(color: mainColor),)
                               ],
                             ),
                           ),

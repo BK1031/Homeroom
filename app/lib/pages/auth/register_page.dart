@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:homeroom_flutter/models/user.dart';
@@ -57,16 +59,19 @@ class _RegisterPageState extends State<RegisterPage> {
       else {
         await fb.auth().createUserWithEmailAndPassword(email, password).then((value) async {
           print(value.user.uid);
+          int rng = new Random().nextInt(8);
+          currUser.profilePic = defaultProfilePics[rng - 1];
           await fb.database().ref("users").child(value.user.uid).set({
             "firstName": firstName.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
             "lastName": lastName.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
             "email": email,
             "role": role,
-            "profile": currUser.profilePic
+            "profilePic": currUser.profilePic
           });
           currUser.id = value.user.uid;
           currUser.firstName = firstName;
           currUser.lastName = lastName;
+          currUser.email = email;
           currUser.role = role;
           router.navigateTo(context, "/home?new", transition: TransitionType.fadeIn, clearStack: true);
         });
