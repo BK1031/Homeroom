@@ -85,9 +85,11 @@ class _RoomPageState extends State<RoomPage> {
                       ),
                     ),
                     new Expanded(
-                      child: new Container(
-                        width: double.maxFinite,
-                        child: Center(child: game.widget),
+                      child: Center(
+                        child: new Container(
+                          width: double.maxFinite,
+                          child: Center(child: game.widget),
+                        ),
                       ),
                     )
                   ],
@@ -198,7 +200,7 @@ class _RoomPageState extends State<RoomPage> {
                           color: Colors.red,
                           child: new InkWell(
                             onTap: () {
-                              router.navigateTo(context, "/home", transition: TransitionType.native);
+                              router.navigateTo(context, "/home", transition: TransitionType.fadeIn);
                               fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
                             },
                             child: new Container(
