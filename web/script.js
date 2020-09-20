@@ -18,8 +18,8 @@ let micToggleBtn = document.getElementById("mic-toggle");
 
 var options = {
     appId: '0635469ee0d748a28432cfe30e80507c',
-    channel: 'room1',
-    token: '0060635469ee0d748a28432cfe30e80507cIAD5RJh3wPsJK8/BQCWiYeGM4n5z5490yoDERtQ7ObgXMSo6c+QAAAAAEAAzuiAF3wtnXwEAAQDfC2df',
+    channel: 'codin',
+    token: "0060635469ee0d748a28432cfe30e80507cIABcTGhRTJsNL3AKUWXdQAzrOCj2m8v5fXfdAblxVAzfkpjiHioAAAAAIgBWJtrxBGJoXwQAAQCUHmdfAgCUHmdfAwCUHmdfBACUHmdf",
     uid: null,
 }
 
