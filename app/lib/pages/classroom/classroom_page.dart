@@ -133,7 +133,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
         child: new AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
           backgroundColor: currCardColor,
-          title: new Text("Create Class", style: TextStyle(color: currTextColor),),
+          title: new Text("Join Class", style: TextStyle(color: currTextColor),),
           content: Container(
             width: 550,
             child: new Column(

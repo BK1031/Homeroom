@@ -57,6 +57,7 @@ class _RoomPageState extends State<RoomPage> {
             new Expanded(
               child: Container(
                 child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     new ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
@@ -87,8 +88,8 @@ class _RoomPageState extends State<RoomPage> {
                     new Expanded(
                       child: new Container(
                         width: double.maxFinite,
-                        color: Colors.lightGreenAccent,
-                        child: game.widget,
+                        color: currBackgroundColor,
+                        child: Center(child: game.widget),
                       ),
                     )
                   ],
@@ -199,8 +200,9 @@ class _RoomPageState extends State<RoomPage> {
                           color: Colors.red,
                           child: new InkWell(
                             onTap: () {
+                              game.suspend();
+                              router.navigateTo(context, "/home", transition: TransitionType.fadeIn);
                               fb.database().ref("rooms").child(id).child("users").child(currUser.id).remove();
-                              router.navigateTo(context, "/home", transition: TransitionType.native);
                             },
                             child: new Container(
                               height: 75,

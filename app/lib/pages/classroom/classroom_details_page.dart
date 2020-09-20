@@ -117,9 +117,23 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    new Text(
-                      classroom.name,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35, color: currTextColor),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        new Text(
+                          classroom.name,
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35, color: currTextColor),
+                        ),
+                        new FlatButton(
+                          child: new Text("ENTER ROOM"),
+                          textColor: mainColor,
+                          onPressed: () {
+                            fb.database().ref("rooms").child(id).child("hi").set("hi");
+                            router.pop(context);
+                            router.navigateTo(context, "/room/$id", transition: TransitionType.fadeIn);
+                          },
+                        )
+                      ],
                     ),
                     new Padding(padding: EdgeInsets.all(24)),
                     new Row(
